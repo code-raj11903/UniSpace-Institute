@@ -1,27 +1,34 @@
 import express from "express";
+import { connectDB } from "./database/connectDB.js";
 import dotenv from "dotenv";
-import connectDB from "./database/connectDB.js";
 import cookieParser from "cookie-parser";
-import { v2 as cloudinary } from "cloudinary";
+import path from "path";
+import cloudinary from "cloudinary";
 
 dotenv.config();
 
-connectDB();
+const app = express();
+const PORT = process.env.PORT || 5000;
+const __dirname = path.resolve();
 
-const PORT = process.env.PORT || 4000;
-
-
-cloudinary.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
+// Configure Cloudinary
+cloudinary.v2.config({
+    cloud_name: process.env.CLOUDINARY_CLIENT_NAME,
+    api_key: process.env.CLOUDINARY_CLIENT_API,
+    api_secret: process.env.CLOUDINARY_CLIENT_SECRET,
 });
 
-// Middlewares
-app.use(express.urlencoded({ extended: true })); // To parse form data in the req.body
+// Middleware
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Routes
-// app.use("/api/users", userRoutes);
+// Connect to MongoDB
+connectDB();
 
-server.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}`));
+// Your routes and other server logic here
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server running at port ${PORT}`);
+});
