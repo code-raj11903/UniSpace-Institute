@@ -45,7 +45,7 @@ npm install
 
 #To start Backend
 
-npm start To start Backend
+npm start 
 
 ```
 ## Start the App:

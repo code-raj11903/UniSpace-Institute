@@ -1,4 +1,3 @@
-import path from "path";
 import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./database/connectDB.js";
@@ -9,9 +8,8 @@ dotenv.config();
 
 connectDB();
 
-
 const PORT = process.env.PORT || 4000;
-const __dirname = path.resolve();
+
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
