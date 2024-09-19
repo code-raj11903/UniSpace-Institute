@@ -3,6 +3,7 @@ import {
     registerInstitute, 
     loginInstitute, 
     logoutInstitute,
+    getAllDepartments,
     addDepartment,
     deleteDepartment,
     getAllInstituteResources,
@@ -21,7 +22,7 @@ router.post("/login", loginInstitute);
 router.get("/logout", logoutInstitute);
 
 // Department management (by institute)
-
+router.get("/department", isAuthenticatedInstitute, getAllDepartments);
 router.post("/department/add", isAuthenticatedInstitute, addDepartment);
 router.delete("/department/delete/:id", isAuthenticatedInstitute, deleteDepartment);
 

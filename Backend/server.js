@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import path from "path";
 import cloudinary from "cloudinary";
 import instituteRouter from "./routes/instituteRoutes.js";
-// import departmentRouter from "./routes/departmentRoutes.js";
+import departmentRouter from "./routes/departmentRoutes.js";
 
 
 dotenv.config();
@@ -36,7 +36,7 @@ app.use(cookieParser());
 app.use("/api/v1/institute", instituteRouter);
 
 // Department routes
-// app.use("/api/v1/department", departmentRouter);
+app.use("/api/v1/department", departmentRouter);
 
 // Start the server
 app.listen(PORT, () => {

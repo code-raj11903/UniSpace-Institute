@@ -97,6 +97,17 @@ const logoutInstitute = (req, res) => {
     console.log("Error in logoutInstitute: ", error.message);
   }
 };
+const getAllDepartments = async (req, res) => {
+  try {
+    const instituteId = req.user.id; // Assuming you store user ID in req.user from middleware
+    const departments = await Department.find({ institute_id: instituteId });
+    console.log(departments);
+    res.status(200).json(departments);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log("Error in getAllDepartments: ", error.message);
+  }
+}
 // Add Department
 const addDepartment = async (req, res) => {
     try {
@@ -139,7 +150,7 @@ const deleteDepartment = async (req, res) => {
         const department = await Department.findOne({ _id: id, institute_id: instituteId });
         if (!department) return res.status(404).json({ message: "Department not found" });
 
-        await department.remove();
+        await Department.deleteOne({ _id: id, institute_id: instituteId });
         await Institute.findByIdAndUpdate(instituteId, { $pull: { departments: id } });
 
         res.status(200).json({ message: "Department deleted successfully" });
@@ -243,16 +254,49 @@ const deleteResource = async (req, res) => {
 // Update Institute Profile
 const updateInstituteProfile = async (req, res) => {
     try {
-        const instituteId = req.user.id;
-        const { name, location, phone } = req.body;
+        const instituteId = req.user.id; // Assuming `req.user.id` comes from authentication middleware
+        const { name, location, phone, currentPassword, newPassword } = req.body;
 
-        const updatedInstitute = await Institute.findByIdAndUpdate(
-            instituteId,
-            { name, location, phone },
-            { new: true }
-        );
+        // Find the institute by ID
+        const institute = await Institute.findById(instituteId).select("+password");
 
-        res.status(200).json(updatedInstitute);
+        // If institute is not found
+        if (!institute) {
+            return res.status(404).json({ error: "Institute not found" });
+        }
+
+        // If the current password and new password are provided, update the password
+        if (currentPassword && newPassword) {
+            // Check if the current password matches
+            const isPasswordCorrect = await bcrypt.compare(currentPassword, institute.password);
+            if (!isPasswordCorrect) {
+                return res.status(400).json({ error: "Current password is incorrect" });
+            }
+
+            // Hash the new password before saving it
+            const salt = await bcrypt.genSalt(10);
+            const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+            // Update the password
+            institute.password = hashedNewPassword;
+        }
+
+        // Update other profile fields
+        institute.name = name || institute.name;
+        institute.location = location || institute.location;
+        institute.phone = phone || institute.phone;
+
+        // Save the updated institute profile
+        await institute.save();
+
+        // Return the updated profile (excluding the password)
+        res.status(200).json({
+            _id: institute._id,
+            name: institute.name,
+            email: institute.email,
+            location: institute.location,
+            phone: institute.phone,
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
         console.log("Error in updateInstituteProfile: ", error.message);
@@ -263,6 +307,7 @@ export {
     registerInstitute,
     loginInstitute,
     logoutInstitute,
+    getAllDepartments,
     addDepartment,
     deleteDepartment,
     getAllInstituteResources,

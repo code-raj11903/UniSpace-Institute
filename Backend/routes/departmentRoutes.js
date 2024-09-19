@@ -1,5 +1,5 @@
 import express from "express";
-import { loginDepartment, logoutDepartment, addResource, updateResource, deleteResource, getOrderHistory, updateDepartmentProfile } from "../controllers/departmentController.js";
+import { loginDepartment, logoutDepartment,getAllDepartmentResources, addResource, updateResource, deleteResource, getOrderHistory, updateDepartmentProfile } from "../controllers/departmentController.js";
 import isAuthenticatedDepartment from "../middlewares/isAuthenticatedDepartment.js";
 
 const router = express.Router();
