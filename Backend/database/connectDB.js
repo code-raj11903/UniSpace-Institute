@@ -1,14 +1,19 @@
 import mongoose from "mongoose";
 
-export const connectDB = () => {
-  mongoose
-    .connect(process.env.MONGO_URI, {
-      dbName: "UniSpace",
-    })
-    .then(() => {
-      console.log("Connected to database.");
-    })
-    .catch((err) => {
-      console.log(`Some Error occured. ${err}`);
-    });
+const connectDB = async () => {
+	try {
+		const conn = await mongoose.connect(process.env.MONGO_URI, {
+			// To avoid warnings in the console
+			dbName: "UniSpace",
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+		});
+
+		console.log(`MongoDB Connected: ${conn.connection.host}`);
+	} catch (error) {
+		console.error(`Error: ${error.message}`);
+		process.exit(1);
+	}
 };
+
+export default connectDB;
