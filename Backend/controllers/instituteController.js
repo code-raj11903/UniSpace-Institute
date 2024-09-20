@@ -171,66 +171,88 @@ const getAllInstituteResources = async (req, res) => {
         console.log("Error in getAllInstituteResources: ", error.message);
     }
 };
-
-// Add Resource
+// Add a new resource
 const addResource = async (req, res) => {
     try {
-        const { type, description, price_per_day, department_id, image_url } = req.body;
+        const { name, location, type, description, price_per_day, image_url } = req.body;
         const instituteId = req.user.id;
-
-        if (!type || !description || !price_per_day) {
-            return res.status(400).json({ message: "All fields are required" });
+        
+        // Validate input fields
+        if (!name || !location || !type || !description || !price_per_day || !image_url) {
+            return res.status(400).json({ error: "All fields are required" });
         }
 
+        // Upload the image to Cloudinary
+        const uploadedResponse = await cloudinary.uploader.upload(image_url);
+        const uploadedImageUrl = uploadedResponse.secure_url;
+
+        // Create and save the new resource
         const newResource = new Resource({
+            name,
+            location,
             type,
             description,
             price_per_day,
-            department_id,
             institute_id: instituteId,
-            image_url,
+            image_url: uploadedImageUrl,
         });
 
         const savedResource = await newResource.save();
 
+        // Update the Institute model to reference this resource
         await Institute.findByIdAndUpdate(instituteId, { $push: { resources: savedResource._id } });
-        if (department_id) {
-            await Department.findByIdAndUpdate(department_id, { $push: { resources: savedResource._id } });
-        }
 
         res.status(201).json(savedResource);
     } catch (error) {
         res.status(500).json({ error: error.message });
-        console.log("Error in addResource: ", error.message);
+        console.log("Error in addResource:", error.message);
     }
 };
 
-// Update Resource
-const updateResource = async (req, res) => {
+  
+  // Update a resource
+
+  // updating the data in booking list is remaining
+  const updateResource = async (req, res) => {
     try {
         const { id } = req.params;
-        const { type, description, price_per_day, availability, image_url } = req.body;
-        const instituteId = req.user.id;
+        const { name, location, type, description, price_per_day, image_url } = req.body;
 
-        const resource = await Resource.findOne({ _id: id, institute_id: instituteId });
-        if (!resource) return res.status(404).json({ message: "Resource not found" });
+        // Find the existing resource
+        const resource = await Resource.findById(id);
+        if (!resource) return res.status(404).json({ error: "Resource not found" });
 
+        // If a new image is provided, replace the old image in Cloudinary
+        let updatedImageUrl = resource.image_url;
+        if (image_url) {
+            if (resource.image_url) {
+                const public_id = resource.image_url.split("/").pop().split(".")[0];
+                await cloudinary.uploader.destroy(public_id);  // Delete the old image
+            }
+
+            const uploadedResponse = await cloudinary.uploader.upload(image_url);
+            updatedImageUrl = uploadedResponse.secure_url;
+        }
+
+        // Update the resource with new data
+        resource.name = name || resource.name;
+        resource.location = location || resource.location;
         resource.type = type || resource.type;
         resource.description = description || resource.description;
         resource.price_per_day = price_per_day || resource.price_per_day;
-        resource.availability = availability !== undefined ? availability : resource.availability;
-        resource.image_url = image_url || resource.image_url;
+        resource.image_url = updatedImageUrl;
 
         const updatedResource = await resource.save();
         res.status(200).json(updatedResource);
     } catch (error) {
         res.status(500).json({ error: error.message });
-        console.log("Error in updateResource: ", error.message);
+        console.log("Error in updateResource:", error.message);
     }
 };
 
-// Delete Resource
-const deleteResource = async (req, res) => {
+  
+  // Delete a resource
+  const deleteResource = async (req, res) => {
     try {
         const { id } = req.params;
         const instituteId = req.user.id;
@@ -238,16 +260,19 @@ const deleteResource = async (req, res) => {
         const resource = await Resource.findOne({ _id: id, institute_id: instituteId });
         if (!resource) return res.status(404).json({ message: "Resource not found" });
 
+        // Delete the image from Cloudinary if it exists
+        if (resource.image_url) {
+            const public_id = resource.image_url.split("/").pop().split(".")[0];
+            await cloudinary.uploader.destroy(public_id);
+        }
+
         await resource.remove();
         await Institute.findByIdAndUpdate(instituteId, { $pull: { resources: id } });
-        if (resource.department_id) {
-            await Department.findByIdAndUpdate(resource.department_id, { $pull: { resources: id } });
-        }
 
         res.status(200).json({ message: "Resource deleted successfully" });
     } catch (error) {
         res.status(500).json({ error: error.message });
-        console.log("Error in deleteResource: ", error.message);
+        console.log("Error in deleteResource:", error.message);
     }
 };
 

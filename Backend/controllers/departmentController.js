@@ -45,87 +45,128 @@ const logoutDepartment = (req, res) => {
         console.log("Error in logoutDepartment: ", error.message);
     }
 };
-// Add resource
+// Add department Resource
 const addResource = async (req, res) => {
   try {
-    const { type, description, price_per_day, image_url } = req.body;
-    const departmentId = req.user.id; // Assuming you store user ID in req.user from middleware
-    const instituteId = req.user.instituteId; // Ensure that institute ID is available
+    const { name, location, type, description, price_per_day, image_url } = req.body;
+    const departmentId = req.user.id; // Get the department ID from auth middleware
 
-    if (!type || !description || !price_per_day) {
-      return res.status(400).json({ message: "All fields are required" });
+    // Validate input fields
+    if (!name || !location || !type || !description || !price_per_day || !image_url) {
+      return res.status(400).json({ error: "All fields are required" });
     }
 
+    // Find the department to get the associated institute ID
+    const department = await Department.findById(departmentId);
+    if (!department) {
+      return res.status(404).json({ error: "Department not found" });
+    }
+
+    const instituteId = department.institute_id; // Get the associated institute ID
+
+    // Upload the image to Cloudinary
+    const uploadedResponse = await cloudinary.uploader.upload(image_url);
+    const uploadedImageUrl = uploadedResponse.secure_url;
+
+    // Create and save the new resource
     const newResource = new Resource({
+      name,
+      location,
       type,
       description,
       price_per_day,
-      image_url,
       department_id: departmentId,
-      institute_id: instituteId,
+      institute_id: instituteId, // Add the associated institute ID
+      image_url: uploadedImageUrl,
     });
 
     const savedResource = await newResource.save();
 
+    // Update the Department model to reference this resource
+    await Department.findByIdAndUpdate(departmentId, { $push: { resources: savedResource._id } });
+
+    // Update the Institute model to reference this resource
     await Institute.findByIdAndUpdate(instituteId, { $push: { resources: savedResource._id } });
 
     res.status(201).json(savedResource);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in addResource: ", error.message);
+    console.log("Error in addResource:", error.message);
   }
 };
 
-// Update resource
+
+// Update a resource
 const updateResource = async (req, res) => {
   try {
     const { id } = req.params;
-    const updates = req.body;
+    const { name, location, type, description, price_per_day, image_url } = req.body;
 
-    const updatedResource = await Resource.findByIdAndUpdate(id, updates, { new: true });
+    // Find the existing resource
+    const resource = await Resource.findById(id);
+    if (!resource) return res.status(404).json({ error: "Resource not found" });
 
-    if (!updatedResource) {
-      return res.status(404).json({ message: "Resource not found" });
+    // If a new image is provided, replace the old image in Cloudinary
+    let updatedImageUrl = resource.image_url;
+    if (image_url) {
+      if (resource.image_url) {
+        const public_id = resource.image_url.split("/").pop().split(".")[0];
+        await cloudinary.uploader.destroy(public_id);  // Delete the old image
+      }
+
+      const uploadedResponse = await cloudinary.uploader.upload(image_url);
+      updatedImageUrl = uploadedResponse.secure_url;
     }
 
+    // Update the resource with new data
+    resource.name = name || resource.name;
+    resource.location = location || resource.location;
+    resource.type = type || resource.type;
+    resource.description = description || resource.description;
+    resource.price_per_day = price_per_day || resource.price_per_day;
+    resource.image_url = updatedImageUrl;
+
+    const updatedResource = await resource.save();
     res.status(200).json(updatedResource);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in updateResource: ", error.message);
+    console.log("Error in updateResource:", error.message);
   }
 };
 
-// Delete resource
+// Delete a resource
 const deleteResource = async (req, res) => {
   try {
     const { id } = req.params;
+    const departmentId = req.user.id; // Get the department ID from auth middleware
 
-    const deletedResource = await Resource.findByIdAndRemove(id);
+    const resource = await Resource.findOne({ _id: id, department_id: departmentId });
+    if (!resource) return res.status(404).json({ message: "Resource not found" });
 
-    if (!deletedResource) {
-      return res.status(404).json({ message: "Resource not found" });
+    // Delete the image from Cloudinary if it exists
+    if (resource.image_url) {
+      const public_id = resource.image_url.split("/").pop().split(".")[0];
+      await cloudinary.uploader.destroy(public_id);
     }
 
-    await Institute.findByIdAndUpdate(deletedResource.institute_id, { $pull: { resources: id } });
+    await resource.remove();
+    await Department.findByIdAndUpdate(departmentId, { $pull: { resources: id } });
 
     res.status(200).json({ message: "Resource deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in deleteResource: ", error.message);
+    console.log("Error in deleteResource:", error.message);
   }
 };
-
 // Get all resources for department
 const getAllDepartmentResources = async (req, res) => {
   try {
-    const departmentId = req.user.id; // Assuming you store user ID in req.user from middleware
-
+    const departmentId = req.user.id; // Assuming this comes from the middleware
     const resources = await Resource.find({ department_id: departmentId });
-
     res.status(200).json(resources);
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in getAllDepartmentResources: ", error.message);
+    console.log("Error in getAllDepartmentResources:", error.message);
   }
 };
 
@@ -150,35 +191,63 @@ const getOrderHistory = async (req, res) => {
 // Update department profile
 const updateDepartmentProfile = async (req, res) => {
   try {
-    const departmentId = req.user.id;
-    const { name, location, phone, password } = req.body;
+    const departmentId = req.user.id; // Assuming department ID comes from authentication middleware
+    const { name, location, phone, currentPassword, newPassword } = req.body;
 
-    const updates = { name, location, phone };
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      updates.password = await bcrypt.hash(password, salt);
+    // Find the department by ID
+    const department = await Department.findById(departmentId).select("+password");
+
+    // If department is not found
+    if (!department) {
+      return res.status(404).json({ error: "Department not found" });
     }
 
-    const updatedDepartment = await Department.findByIdAndUpdate(
-      departmentId,
-      updates,
-      { new: true }
-    );
+    // If the current password and new password are provided, update the password
+    if (currentPassword && newPassword) {
+      // Check if the current password matches
+      const isPasswordCorrect = await bcrypt.compare(currentPassword, department.password);
+      if (!isPasswordCorrect) {
+        return res.status(400).json({ error: "Current password is incorrect" });
+      }
 
-    res.status(200).json(updatedDepartment);
+      // Hash the new password before saving it
+      const salt = await bcrypt.genSalt(10);
+      const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+      // Update the password
+      department.password = hashedNewPassword;
+    }
+
+    // Update other profile fields
+    department.name = name || department.name;
+    department.location = location || department.location;
+    department.phone = phone || department.phone;
+
+    // Save the updated department profile
+    await department.save();
+
+    // Return the updated profile (excluding the password)
+    res.status(200).json({
+      _id: department._id,
+      name: department.name,
+      location: department.location,
+      phone: department.phone,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("Error in updateDepartmentProfile: ", error.message);
   }
 };
 
+
 export {
   loginDepartment,
   logoutDepartment,
+  getAllDepartmentResources,
   addResource,
   updateResource,
   deleteResource,
   getOrderHistory,
-  updateDepartmentProfile,
-  getAllDepartmentResources
+  updateDepartmentProfile
+  
 };
