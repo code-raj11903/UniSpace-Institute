@@ -266,7 +266,7 @@ const addResource = async (req, res) => {
             await cloudinary.uploader.destroy(public_id);
         }
 
-        await resource.remove();
+        await Resource.deleteOne({ _id: id, institute_id: instituteId });
         await Institute.findByIdAndUpdate(instituteId, { $pull: { resources: id } });
 
         res.status(200).json({ message: "Resource deleted successfully" });

@@ -3,6 +3,7 @@ import Resource from "../models/resourceModel.js";
 import Institute from "../models/instituteModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
+import { v2 as cloudinary } from "cloudinary";
 
 // Login department
  const loginDepartment = async (req, res) => {
@@ -139,7 +140,7 @@ const deleteResource = async (req, res) => {
   try {
     const { id } = req.params;
     const departmentId = req.user.id; // Get the department ID from auth middleware
-
+    const instituteId = departmentId.institute_id;
     const resource = await Resource.findOne({ _id: id, department_id: departmentId });
     if (!resource) return res.status(404).json({ message: "Resource not found" });
 
@@ -149,8 +150,11 @@ const deleteResource = async (req, res) => {
       await cloudinary.uploader.destroy(public_id);
     }
 
-    await resource.remove();
+    
+    await Resource.deleteOne({ _id: id, department_id: departmentId });
+    
     await Department.findByIdAndUpdate(departmentId, { $pull: { resources: id } });
+    await Institute.findByIdAndUpdate(instituteId, { $pull: { resources: id } });
 
     res.status(200).json({ message: "Resource deleted successfully" });
   } catch (error) {
