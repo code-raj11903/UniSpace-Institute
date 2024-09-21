@@ -21,10 +21,6 @@ JWT_EXPIRES=7d
 COOKIE_EXPIRE=5
 ```
 
-## Build the App:
-```sh
-npm run build
-```
 ## Instructions
 ```sh
 git clone https://github.com/code-raj11903/UniSpace-Institute.git
@@ -55,3 +51,7 @@ npm start
 
 ---
 
+## Build the App:
+```sh
+npm run build
+```
