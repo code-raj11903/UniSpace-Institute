@@ -2,19 +2,40 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
+  const handleLogout = () => {
+    console.log("User logged out");
+  };
+
   return (
-    <nav className="bg-gray-800 p-4">
-      <div className="container mx-auto">
-        <div className="flex justify-between items-center">
-          <Link to="/" className="text-white text-lg font-bold">Institute Dashboard</Link>
-          <div>
-            <Link to="/" className="text-gray-300 hover:text-white mx-2">Home</Link>
-            <Link to="/departments" className="text-gray-300 hover:text-white mx-2">Departments</Link>
-            <Link to="/profile-management" className="text-gray-300 hover:text-white mx-2">Profile Management</Link>
-            <Link to="/resources" className="text-gray-300 hover:text-white mx-2">Institute Resources</Link>
-            <Link to="/orders" className="text-gray-300 hover:text-white mx-2">Orders</Link>
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/App" className="hover:text-gray-300">
+          Institute Dashboard
+        </Link>
+      </div>
+      <div className="navbar-right">
+        <div className="relative group">
+          <button className="hover:text-gray-300">Departments</button>
+          <div className="absolute hidden group-hover:block bg-white text-black py-2 rounded shadow-md">
+            <Link to="/departments/add" className="block px-6 py-2 hover:bg-gray-200">Add Department</Link>
+            <Link to="/departments/list" className="block px-6 py-2 hover:bg-gray-200">Department List</Link>
           </div>
         </div>
+        <div className="relative group">
+          <button className="hover:text-gray-300">Profile Management</button>
+          <div className="absolute hidden group-hover:block bg-white text-black py-2 rounded shadow-md">
+            <Link to="/profile-management/update" className="block px-4 py-2 hover:bg-gray-200">Update Profile</Link>
+            <Link to="/profile-management/orders" className="block px-4 py-2 hover:bg-gray-200">Order History</Link>
+          </div>
+        </div>
+        <div className="relative group">
+          <button className="hover:text-gray-300">Institute Resources</button>
+          <div className="absolute hidden group-hover:block bg-white text-black py-2 rounded shadow-md">
+            <Link to="/add-resource" className="block px-4 py-2 hover:bg-gray-200">Add Resource</Link>
+            <Link to="/resource-list" className="block px-4 py-2 hover:bg-gray-200">Resource List</Link>
+          </div>
+        </div>
+        <button onClick={handleLogout} className="hover:text-gray-300">Logout</button>
       </div>
     </nav>
   );

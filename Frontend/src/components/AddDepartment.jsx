@@ -24,70 +24,78 @@ const AddDepartment = ({ addDepartment }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-xl font-bold mb-4">Add New Department</h2>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Department Name</label>
-        <input
-          name="name"
-          value={department.name}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          type="text"
-          placeholder="Department Name"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Email</label>
-        <input
-          name="email"
-          value={department.email}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          type="email"
-          placeholder="Department Email"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Location</label>
-        <input
-          name="location"
-          value={department.location}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          type="text"
-          placeholder="Location"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Contact Info</label>
-        <input
-          name="contact"
-          value={department.contact}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          type="text"
-          placeholder="Contact Info"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-        <input
-          name="password"
-          value={department.password}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          type="password"
-          placeholder="Password"
-        />
-      </div>
-      <button
-        type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Add Department
-      </button>
-    </form>
+    <div className="flex justify-center items-center">
+      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-10 pt-8 pb-5 mb-4 max-w-2xl w-full"> {/* Increased size */}
+        <h2 className="text-3xl font-bold mb-8 text-center">Add New Department</h2> {/* Increased font size */}
+        
+        <div className="mb-6">
+          <label className="block text-gray-700 text-base font-bold mb-2">Department Name</label> {/* Increased font size */}
+          <input
+            name="name"
+            value={department.name}
+            onChange={handleChange}
+            className="shadow appearance-none border border-gray-400 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:border-black"
+            type="text"
+            placeholder="Enter department name"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 text-base font-bold mb-2">Email</label> {/* Increased font size */}
+          <input
+            name="email"
+            value={department.email}
+            onChange={handleChange}
+            className="shadow appearance-none border border-gray-400 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:border-black"
+            type="email"
+            placeholder="Enter department email"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 text-base font-bold mb-2">Location</label> {/* Increased font size */}
+          <input
+            name="location"
+            value={department.location}
+            onChange={handleChange}
+            className="shadow appearance-none border border-gray-400 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:border-black"
+            type="text"
+            placeholder="Enter location"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 text-base font-bold mb-2">Contact Info</label> {/* Increased font size */}
+          <input
+            name="contact"
+            value={department.contact}
+            onChange={handleChange}
+            className="shadow appearance-none border border-gray-400 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:border-black"
+            type="text"
+            placeholder="Enter contact info"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label className="block text-gray-700 text-base font-bold mb-2">Password</label> {/* Increased font size */}
+          <input
+            name="password"
+            value={department.password}
+            onChange={handleChange}
+            className="shadow appearance-none border border-gray-400 rounded w-full py-4 px-4 text-gray-700 leading-tight focus:outline-none focus:border-black"
+            type="password"
+            placeholder="Enter password"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="bg-black hover:bg-blue-700 text-white font-bold py-4 px-4 rounded w-full focus:outline-none focus:ring-2 focus:ring-black focus:ring-opacity-50"
+        >
+          Add Department
+        </button>
+      </form>
+    </div>
   );
 };
 

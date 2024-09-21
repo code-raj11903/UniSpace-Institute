@@ -1,38 +1,35 @@
 import React from 'react';
 
-const DepartmentList = ({ departments, deleteDepartment }) => {
+const DepartmentList = ({ departments }) => {
   return (
-    <div className="mt-8">
-      <h2 className="text-xl font-bold mb-4">Department List</h2>
-      <table className="min-w-full bg-white">
-        <thead>
-          <tr>
-            <th className="py-2">Name</th>
-            <th className="py-2">Email</th>
-            <th className="py-2">Location</th>
-            <th className="py-2">Contact</th>
-            <th className="py-2">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {departments.map(department => (
-            <tr key={department.id}>
-              <td className="py-2 px-4 border">{department.name}</td>
-              <td className="py-2 px-4 border">{department.email}</td>
-              <td className="py-2 px-4 border">{department.location}</td>
-              <td className="py-2 px-4 border">{department.contact}</td>
-              <td className="py-2 px-4 border">
-                <button
-                  onClick={() => deleteDepartment(department.id)}
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded"
-                >
-                  Delete
-                </button>
-              </td>
+    <div>
+      <h2 className="text-2xl font-bold">Department List</h2>
+      {departments.length > 0 ? (
+        <table className="table-auto w-full mt-4 bg-white">
+          <thead>
+            <tr>
+              <th className="px-4 py-2">ID</th>
+              <th className="px-4 py-2">Name</th>
+              <th className="px-4 py-2">Email</th>
+              <th className="px-4 py-2">Location</th>
+              <th className="px-4 py-2">Contact</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {departments.map((dept) => (
+              <tr key={dept.id}>
+                <td className="border px-4 py-2">{dept.id}</td>
+                <td className="border px-4 py-2">{dept.name}</td>
+                <td className="border px-4 py-2">{dept.email}</td>
+                <td className="border px-4 py-2">{dept.location}</td>
+                <td className="border px-4 py-2">{dept.contact}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>No departments available</p>
+      )}
     </div>
   );
 };

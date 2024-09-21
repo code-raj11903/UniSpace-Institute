@@ -4,10 +4,11 @@ import Navbar from './components/Navbar';
 import AddDepartment from './components/AddDepartment';
 import DepartmentList from './components/DepartmentList';
 import ProfileManagement from './components/ProfileManagement';
-import InstituteResources from './components/InstituteResources';
 import OrderHistory from './components/OrderHistory';
-import ResourceManagement from './components/ResourceManagement';
+import ResourceManagementForm from './components/ResourceManagement'; // Import the new form
 
+import Home from './Home';  // Import the home component
+import './App.css'
 const App = () => {
   const [departments, setDepartments] = useState([
     {
@@ -28,57 +29,32 @@ const App = () => {
     }
   ]);
 
-  const [resources, setResources] = useState([
-    { id: 1, name: "Projector", department: "Computer Science", type: "Equipment" },
-    { id: 2, name: "Conference Room", department: "Mechanical Engineering", type: "Room" }
-  ]);
+  const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
 
-  // Add new department
   const addDepartment = (department) => {
     setDepartments([...departments, { id: departments.length + 1, ...department }]);
   };
 
-  // Delete department
-  const deleteDepartment = (id) => {
-    setDepartments(departments.filter(dept => dept.id !== id));
-  };
-
-  // Resource CRUD operations
-  const addResource = (resource) => {
-    setResources([...resources, { id: resources.length + 1, ...resource }]);
-  };
-
-  const updateResource = (updatedResource) => {
-    setResources(resources.map(res => res.id === updatedResource.id ? updatedResource : res));
-  };
-
-  const deleteResource = (id) => {
-    setResources(resources.filter(res => res.id !== id));
+  const OpenSidebar = () => {
+    setOpenSidebarToggle(!openSidebarToggle);
   };
 
   return (
     <Router>
-      <Navbar />
-      <div className="container mx-auto px-4 mt-6">
-        <Routes>
-          <Route path="/" element={<h1 className="text-3xl font-bold text-center mt-4">Analysis Dashboard</h1>} />
-          <Route path="/departments" element={
-            <>
-              <AddDepartment addDepartment={addDepartment} />
-              <DepartmentList departments={departments} deleteDepartment={deleteDepartment} />
-            </>
-          } />
-          <Route path="/profile-management" element={<ProfileManagement />} />
-          <Route path="/resources" element={
-            <ResourceManagement
-              resources={resources}
-              addResource={addResource}
-              updateResource={updateResource}
-              deleteResource={deleteResource}
-            />
-          } />
-          <Route path="/orders" element={<OrderHistory />} />
-        </Routes>
+      <div className="grid-container">
+        
+        <div className="main-content container mx-auto px-4 mt-6">
+          <Navbar />
+          <Routes>
+          <Route path="/" element={<Home />} />
+            <Route path="/App" element={<Home />} />
+            <Route path="/departments/add" element={<AddDepartment addDepartment={addDepartment} />} />
+            <Route path="/departments/list" element={<DepartmentList departments={departments} />} />
+            <Route path="/profile-management/update" element={<ProfileManagement />} />
+            <Route path="/profile-management/orders" element={<OrderHistory />} />
+            <Route path="/add-resource" element={<ResourceManagementForm />} />
+          </Routes>
+        </div>
       </div>
     </Router>
   );
