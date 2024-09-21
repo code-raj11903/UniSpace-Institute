@@ -1,71 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-const AddResource = ({ addResource, editResource, handleUpdate }) => {
-  const [resource, setResource] = useState({ name: '', department: '', type: '' });
-
-  useEffect(() => {
-    if (editResource) {
-      setResource(editResource);
-    } else {
-      setResource({ name: '', department: '', type: '' });
-    }
-  }, [editResource]);
-
-  const handleChange = (e) => {
-    setResource({ ...resource, [e.target.name]: e.target.value });
-  };
-
+const AddResource = ({ addResource }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (editResource) {
-      handleUpdate(resource);
-    } else {
-      addResource(resource);
-    }
-    setResource({ name: '', department: '', type: '' });
+    const resource = {
+      name: e.target.resourceName.value,
+      department: e.target.department.value,
+      type: e.target.type.value,
+    };
+    addResource(resource);
+    e.target.reset();
   };
 
   return (
-    <form onSubmit={handleSubmit} className="my-4">
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Resource Name</label>
-        <input
-          type="text"
-          name="name"
-          value={resource.name}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Department</label>
-        <input
-          type="text"
-          name="department"
-          value={resource.department}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">Type</label>
-        <input
-          type="text"
-          name="type"
-          value={resource.type}
-          onChange={handleChange}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight"
-          required
-        />
-      </div>
-      <button
-        type="submit"
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        {editResource ? 'Update Resource' : 'Add Resource'}
-      </button>
-    </form>
+    <div className="max-w-lg mx-auto my-10 p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-2xl font-bold mb-4 text-black">Add Resource</h1> {/* Changed to black */}
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="resourceName" className="block text-black">Resource Name</label> {/* Changed to black */}
+          <input 
+            id="resourceName" 
+            type="text" 
+            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-500" 
+            required 
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="department" className="block text-black">Department</label> {/* Changed to black */}
+          <input 
+            id="department" 
+            type="text" 
+            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-500" 
+            required 
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="type" className="block text-black">Type</label> {/* Changed to black */}
+          <input 
+            id="type" 
+            type="text" 
+            className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black-500" 
+            required 
+          />
+        </div>
+        <button 
+          type="submit" 
+          className="w-full bg-black text-white py-2 rounded-md hover:bg-black-600 focus:outline-none"
+        >
+          Add Resource {/* Button text remains white */}
+        </button>
+      </form>
+    </div>
   );
 };
 
