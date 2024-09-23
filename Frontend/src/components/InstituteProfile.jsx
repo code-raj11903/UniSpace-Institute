@@ -1,62 +1,124 @@
 import React, { useState } from 'react';
-import OrderHistory from './OrderHistory';
 
-const InstituteProfile = () => {
-  const [instituteInfo, setInstituteInfo] = useState({
-    contact: '987654321',
-    password: 'instpassword456',
-    orders: [
-      { id: 1, item: 'Whiteboard', status: 'Delivered' },
-      { id: 2, item: 'Lab Equipment', status: 'Shipped' }
-    ]
+const InstituteProfileForm = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    currentPassword: '',
+    newPassword: '',
+    location: '',
+    phone: '',
   });
 
-  const handleChange = (e) => {
-    setInstituteInfo({ ...instituteInfo, [e.target.name]: e.target.value });
+  const handleInputChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert('Institute info updated successfully!');
+    console.log('Institute Profile Updated:', formData);
   };
 
   return (
-    <div className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 className="text-xl font-bold mb-4">Institute Profile</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Contact Info</label>
-          <input
-            name="contact"
-            value={instituteInfo.contact}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-            type="text"
-            placeholder="Contact Info"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
-          <input
-            name="password"
-            value={instituteInfo.password}
-            onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-            type="password"
-            placeholder="Password"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        >
-          Update Institute Info
-        </button>
-      </form>
+    <div className="flex justify-center items-center">
+      <div className="w-full max-w-2xl p-8 bg-white rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-center text-black mb-6">Update Institute Profile</h1>
 
-      <OrderHistory orders={instituteInfo.orders} />
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-black font-semibold mb-2" htmlFor="name">
+              Institute Name
+            </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-black font-semibold mb-2" htmlFor="email">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              id="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-black font-semibold mb-2" htmlFor="currentPassword">
+              Current Password
+            </label>
+            <input
+              type="password"
+              name="currentPassword"
+              id="currentPassword"
+              value={formData.currentPassword}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-black font-semibold mb-2" htmlFor="newPassword">
+              New Password
+            </label>
+            <input
+              type="password"
+              name="newPassword"
+              id="newPassword"
+              value={formData.newPassword}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-black font-semibold mb-2" htmlFor="location">
+              Location
+            </label>
+            <input
+              type="text"
+              name="location"
+              id="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-black font-semibold mb-2" htmlFor="phone">
+              Phone Number
+            </label>
+            <input
+              type="text"
+              name="phone"
+              id="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-black text-white py-3 rounded-lg hover:bg-blue-700 transition duration-300"
+          >
+            Update Profile
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default InstituteProfile;
+export default InstituteProfileForm;
