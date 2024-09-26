@@ -6,6 +6,7 @@ import path from "path";
 import cloudinary from "cloudinary";
 import instituteRouter from "./routes/instituteRoutes.js";
 import departmentRouter from "./routes/departmentRoutes.js";
+import cors from 'cors';
 
 
 dotenv.config();
@@ -31,6 +32,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+app.use(
+  cors({
+    origin: [process.env.FRONTEND_URL],
+    method: ["GET", "POST", "DELETE", "PUT"],
+    credentials: true,
+  })
+);
 
 // Institute routes
 app.use("/api/v1/institute", instituteRouter);
