@@ -1,5 +1,6 @@
-@import "@material-tailwind/react/tailwind.css";
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* Root Global Styles */
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
