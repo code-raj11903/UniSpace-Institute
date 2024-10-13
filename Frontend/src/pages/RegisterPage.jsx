@@ -1,35 +1,50 @@
 // src/pages/RegisterPage.jsx
-import React, { useState } from 'react';
-import { registerInstitute } from '../services/authService';
 import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Register_img from "../assets/Name-Logo.png"
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState('');
   const [location, setLocation] = useState('');
   const [phone, setPhone] = useState('');
+  const { setUser } = useContext(AuthContext); // Get setUser from context
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
-    const instituteData = {
-      name,
-      email,
-      password,
-      location,
-      phone
-    };
 
     try {
-      const response = await registerInstitute(instituteData);
-      console.log(response)
-      // navigate('/dashboard');  
+      const response = await fetch('/api/v1/institute/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, email, password, location, phone }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Registration failed');
+      }
+
+      const data = await response.json();
+      localStorage.setItem('token', data.token); // Store token in localStorage
+      localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
+      localStorage.setItem('usertype', data.user.role); // Store user role
+
+      setUser(data.user); // Set user in global context after successful registration
+      console.log(data)
+
+      toast.success('Registration successful! Redirecting to dashboard...');
+      navigate('/login'); // Redirect to dashboard after successful registration
     } catch (error) {
-      console.error('Registration failed', error);
+      toast.error(error.message);
     }
   };
 
@@ -41,7 +56,7 @@ const RegisterPage = () => {
       <div className="bg-white shadow-lg p-8 rounded-lg max-w-md w-full">
         <h2 className="text-2xl font-bold mb-4 text-center">Create an Institute Account</h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleRegister}>
           <div className="mb-4">
             <input
               type="text"
@@ -75,7 +90,7 @@ const RegisterPage = () => {
           <button 
   type="button" 
   onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-  className="absolute right-3 top-2 text-sm bg-white text-black focus:outline-none"
+  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white border-none focus:outline-none"
 >
   {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Switch between eye and eye-slash icons */}
 </button>

@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
 import validator from 'validator';
+const phoneValidator = (phone) => {
+  const phoneRegex = /^[0-9]{10}$/;
+  return phoneRegex.test(phone);
+};
+
 const InstituteSchema = new mongoose.Schema({
   name: { type: String, 
     required: [true, "Institute name is required"] 
@@ -17,7 +22,14 @@ const InstituteSchema = new mongoose.Schema({
     select: false
   },
   location: { type: String, required: [true, "Location is required"] },
-  phone: { type: String, required: [true, "Phone number is required"] },
+  phone: { 
+    type: String, 
+    required: [true, "Phone number is required"],
+    validate: [phoneValidator, "Please provide a valid phone number (10 digits)!"] 
+  },
+  role: {
+    type: String,
+    default: 'institute'},
   departments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Department" }],
   resources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],

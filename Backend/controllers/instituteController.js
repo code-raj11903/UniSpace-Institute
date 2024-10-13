@@ -31,19 +31,23 @@ const registerInstitute = async (req, res) => {
       password:hashedPassword,
       location,
       phone,
+      role: 'institute'
     });
     await newInstitute.save();
     // Respond with success
     if (newInstitute) {
-        generateTokenAndSetCookie(newInstitute._id, res);
+       const token = generateTokenAndSetCookie(newInstitute._id, res);
 
         res.status(201).json({
-            
-              _id: newInstitute._id,
-              name: newInstitute.name,
-              email: newInstitute.email,
-              location: newInstitute.location,
-              phone: newInstitute.phone,
+           token : token,
+           user: {
+            _id: newInstitute._id,
+            name: newInstitute.name,
+            email: newInstitute.email,
+            location: newInstitute.location,
+            phone: newInstitute.phone,
+            role: newInstitute.role
+           }  
           });
     } else {
         res.status(400).json({ error: "Invalid Institute data" });
@@ -71,15 +75,19 @@ const loginInstitute = async (req, res) => {
       }
   
       // Generate JWT token and set it as a cookie
-      generateTokenAndSetCookie(institute._id, res);
+      const token  = generateTokenAndSetCookie(institute._id, res);
   
       // Send back the institute data (without password)
       res.status(200).json({
-        _id: institute._id,
-        name: institute.name,
-        email: institute.email,
-        location: institute.location,
-        phone: institute.phone,
+        token : token,
+        user: {
+          _id: institute._id,
+          name: institute.name,
+          email: institute.email,
+          location: institute.location,
+          phone: institute.phone,
+          role: institute.role
+        }
       });
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -128,6 +136,7 @@ const addDepartment = async (req, res) => {
             phone,
             password: hashedPassword,
             institute_id: instituteId,
+            role: 'department'
         });
 
         const savedDepartment = await newDepartment.save();

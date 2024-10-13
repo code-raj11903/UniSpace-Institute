@@ -1,7 +1,8 @@
 // src/pages/LoginPage.jsx
-import React, { useState } from 'react';
-import { loginInstitute, loginDepartment } from '../services/authService';
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { toast } from 'react-toastify';
 import Register_img from "../assets/Name-Logo.png"
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 const LoginPage = () => {
@@ -9,24 +10,41 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loginType, setLoginType] = useState('institute'); 
   const [showPassword, setShowPassword] = useState(false);
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    let response;
-    try {
-      if (loginType === 'institute') {
-        response = await loginInstitute({ email, password });
-      } else {
-         response =  await loginDepartment({ email, password });
+  
+    const handleLogin = async (e) => {
+      e.preventDefault();
+  
+      try {
+        const response = await fetch(`/api/v1/${loginType}/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password }),
+        });
+  
+          console.log(response);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Login failed');
+        }
+  
+        const data = await response.json();
+        console.log(data);
+        localStorage.setItem('token', data.token); // Store token in localStorage
+        localStorage.setItem('user', JSON.stringify(data.user)); // Store user info
+        localStorage.setItem('usertype', data.user.role); // Store user role (institute/department)
+  
+        setUser(data.user); // Set user in context
+        toast.success('Login successful!');
+        navigate('/dashboard');
+      } catch (error) {
+        toast.error(error.message);
       }
-       
-      console.log(response);
-      navigate('/dashboard');
-    } catch (error) {
-      console.error('Login failed', error);
-    }
-  };
+    };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -45,7 +63,7 @@ const LoginPage = () => {
 
         <p className="text-center text-gray-500 mb-4">or</p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div className="mb-4">
             <input
               type="email"
@@ -57,6 +75,7 @@ const LoginPage = () => {
             />
           </div>
           <div className="mb-6 relative">
+            
             <input
               type= {showPassword ? "text":"password"}
               value={password}
@@ -68,7 +87,7 @@ const LoginPage = () => {
              <button 
   type="button" 
   onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-  className="absolute right-3 top-4 text-sm bg-white text-black focus:outline-none"
+  className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-white border-none focus:outline-none"
 >
   {showPassword ? <FaEyeSlash /> : <FaEye />} {/* Switch between eye and eye-slash icons */}
 </button>
@@ -108,6 +127,7 @@ const LoginPage = () => {
         </p>
       </div>
     </div>
+  
   );
 };
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../assets/UniSpaceLogo.png';  // Import logo
-
+import logo from '../../assets/UniSpaceLogo.png';
 const Header = () => {
   return (
     <header className="bg-gray-200 shadow-lg p-4 flex justify-around items-center space-x- 10">

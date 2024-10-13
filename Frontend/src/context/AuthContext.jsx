@@ -1,28 +1,24 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
-// Create the AuthContext
 export const AuthContext = createContext();
 
-// Create the AuthProvider component that will wrap around your app
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userType, setUserType] = useState(null); // 'institute' or 'department'
+  const [user, setUser] = useState(null);
 
-  // Function to log in
-  const login = (type) => {
-    setIsAuthenticated(true);
-    setUserType(type);
-  };
 
-  // Function to log out
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUserType(null);
-  };
+  useEffect(() => {
+    // Check if there's a token and role in localStorage on app load
+    const token = localStorage.getItem('token');
+    const storedUser = localStorage.getItem('user');
+    const role = localStorage.getItem('usertype');
 
-  // Provide the context to child components
+    if (token && storedUser && role) {
+      setUser({ ...JSON.parse(storedUser), role }); // Set user state from localStorage
+    }
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userType, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>
   );

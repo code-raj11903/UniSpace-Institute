@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import HeroSection from '../components/HeroSection';
-import FeaturesSection from '../components/FeaturesSection';
-import Footer from '../components/Footer';
-import RegisterPopup from '../components/RegisterPopup';
+import Header from '../components/Landing/Header';
+import HeroSection from '../components/Landing/HeroSection';
+import FeaturesSection from '../components/Landing/FeaturesSection';
+import Footer from '../components/Landing/Footer';
+import RegisterPopup from '../components/Landing/RegisterPopup';
 import useScrollPosition from '../hooks/useScrollPosition';
+import Navbar from '../components/Navbar';
 
 const LandingPage = () => {
   const [showPopup, setShowPopup] = useState(false);  // Controls popup visibility
@@ -25,7 +26,7 @@ const LandingPage = () => {
 
   return (
     <div>
-      <Header />
+      <Navbar />
       <HeroSection />
       <FeaturesSection />
       <Footer />

@@ -19,15 +19,19 @@ import { v2 as cloudinary } from "cloudinary";
         }
 
         // Generate JWT token and set it as a cookie
-        generateTokenAndSetCookie(department._id, res);
+        const token = generateTokenAndSetCookie(department._id, res);
 
         // Send back the department data (without password)
         res.status(200).json({
+          token: token,
+          user : {
             _id: department._id,
             name: department.name,
             email: department.email,
             location: department.location,
             phone: department.phone,
+            role:   department.role
+          }
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

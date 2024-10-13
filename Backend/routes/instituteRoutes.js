@@ -30,6 +30,7 @@ router.delete("/department/delete/:id", isAuthenticatedInstitute, deleteDepartme
 // Resource management (by institute)
 router.get("/resources", isAuthenticatedInstitute, getAllInstituteResources);
 router.post("/resources/add", isAuthenticatedInstitute, addResource);
+// router.get("/resources/:id", isAuthenticatedInstitute, getInstituteResource);
 router.put("/resources/update/:id", isAuthenticatedInstitute, updateResource);
 router.delete("/resources/delete/:id", isAuthenticatedInstitute, deleteResource);
 
