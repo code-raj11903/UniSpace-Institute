@@ -1,27 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/UniSpaceLogo.png';
+
 const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <header className="bg-gray-200 shadow-lg p-4 flex justify-around items-center space-x- 10">
-      <div className="flex items-center mx-1 ">
-        <Link to="/" className="text-xl font-bold flex items-center">
-          <img src={logo} alt="UniSpace Logo" className="w-10 h-10 mr-2" />
-          <h1 className="text-2xl font-bold">UniSpace</h1>
+    <header className="bg-gradient-to-r from-blue-800 via-blue-600 to-blue-400 shadow-md p-4 lg:px-8 flex justify-between items-center">
+      {/* Logo and Title */}
+      <div className="flex items-center">
+        <Link to="/" className="text-xl font-bold flex items-center text-white">
+          <img src={logo} alt="UniSpace Logo" className="w-12 h-12 mr-2" />
+          <h1 className="text-3xl font-bold">UniSpace</h1>
         </Link>
       </div>
-  
-      <nav>
-        <ul className="flex space-x-12 ">
-          <li><a href="#features" className="hover:text-blue-600">Features</a></li>
-          <li><a href="#about" className="hover:text-blue-600">About Us</a></li>
-          <li><a href="#pricing" className="hover:text-blue-600">Pricing</a></li>
-        </ul>
+      
+      {/* Nav Links */}
+      <nav className="hidden lg:flex space-x-10">
+        <a href="#features" className="text-white hover:text-yellow-300 transition">Features</a>
+        <a href="#about" className="text-white hover:text-yellow-300 transition">About Us</a>
+        <a href="#pricing" className="text-white hover:text-yellow-300 transition">Pricing</a>
       </nav>
-      <div>
-        <a href="/login" className="px-4 py-2 text-blue-600 border rounded-md hover:bg-blue-600 hover:text-white transition">Log In</a>
-        <a href="/register" className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 hover:text-black transition">List Your Resources</a>
+      
+      {/* Action Buttons */}
+      <div className="hidden lg:flex space-x-4">
+        <a href="/login" className="px-4 py-2 text-blue-600 bg-white border border-white rounded-md hover:bg-blue-600 hover:text-white transition">Log In</a>
+        <a href="/register" className="px-4 py-2 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 transition">List Your Resources</a>
       </div>
+
+      {/* Mobile Menu Button */}
+      <button onClick={toggleMenu} className="lg:hidden text-white focus:outline-none">
+        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'}></path>
+        </svg>
+      </button>
+
+      {/* Mobile Menu */}
+      {isOpen && (
+        <nav className="absolute top-16 left-0 w-full bg-blue-800 shadow-lg p-4 flex flex-col space-y-4 lg:hidden">
+          <a href="#features" className="text-white hover:text-yellow-300 transition">Features</a>
+          <a href="#about" className="text-white hover:text-yellow-300 transition">About Us</a>
+          <a href="#pricing" className="text-white hover:text-yellow-300 transition">Pricing</a>
+          <a href="/login" className="px-4 py-2 text-blue-600 bg-white border border-white rounded-md hover:bg-blue-600 hover:text-white transition">Log In</a>
+          <a href="/register" className="px-4 py-2 bg-yellow-400 text-black rounded-md hover:bg-yellow-500 transition">List Your Resources</a>
+        </nav>
+      )}
     </header>
   );
 };

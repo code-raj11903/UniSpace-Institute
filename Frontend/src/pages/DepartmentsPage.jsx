@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import DepartmentCard from '../components/Department/DepartmentCard';
-import AddEditDepartmentModal from '../components/Department/AddEditDepartmentModal';
+import AddDepartmentModal from '../components/Department/AddDepartmentModal';
+import ConfirmDeleteModal from '../components/Department/ConfirmDeleteModal'; // Import the modal
+import { toast } from 'react-toastify';
 
 const DepartmentsPage = () => {
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [editDepartment, setEditDepartment] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [departmentToDelete, setDepartmentToDelete] = useState(null); // Store the department ID to delete
 
   useEffect(() => {
     fetchDepartments();
@@ -16,7 +19,7 @@ const DepartmentsPage = () => {
   const fetchDepartments = async () => {
     setLoading(true);
     try {
-      const res= await fetch(`/api/v1/institute/department`, {
+      const res = await fetch(`/api/v1/institute/department`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -32,17 +35,26 @@ const DepartmentsPage = () => {
   };
 
   // Delete department by ID
-  const handleDeleteDepartment = async (departmentId) => {
-    if (window.confirm('Are you sure you want to delete this department?')) {
+  const handleDeleteDepartment = async () => {
+    if (departmentToDelete) {
       try {
-        await fetch(`/api/v1/institute/department/delete/${departmentId}`, {
+        await fetch(`/api/v1/institute/department/delete/${departmentToDelete}`, {
           method: 'DELETE',
         });
-        fetchDepartments(); // Refresh department list after deletion
+        fetchDepartments();
+        toast.success('Deleted successful!');
+        setDeleteModalOpen(false); // Close modal after deletion
       } catch (error) {
+        toast.error(error.message);
         console.error('Error deleting department:', error);
       }
     }
+  };
+
+  // Open delete confirmation modal
+  const openDeleteModal = (departmentId) => {
+    setDepartmentToDelete(departmentId);
+    setDeleteModalOpen(true);
   };
 
   return (
@@ -59,16 +71,17 @@ const DepartmentsPage = () => {
 
       {/* Department List */}
       {loading ? (
-        <div className="flex justify-center items-center h-40">
-          <div className="spinner border-t-4 border-blue-500 border-solid rounded-full w-16 h-16"></div>
-        </div>
+       <div className="flex justify-center items-center h-30">
+       <div className="spinner border-t-4 border-blue-500 border-solid rounded-full w-16 h-16 animate-spin"></div>
+     </div>
+     
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {departments.map((department) => (
             <DepartmentCard
               key={department._id}
               department={department}
-              onDelete={() => handleDeleteDepartment(department._id)}
+              onDelete={() => openDeleteModal(department._id)} // Open confirmation modal on delete
             />
           ))}
         </div>
@@ -76,15 +89,22 @@ const DepartmentsPage = () => {
 
       {/* Add Department Modal */}
       {showModal && (
-        <AddEditDepartmentModal
+        <AddDepartmentModal
           isOpen={showModal}
           onClose={() => {
             setShowModal(false);
-            setEditDepartment(null);
           }}
           onSuccess={fetchDepartments}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)} // Close modal on No
+        onConfirm={handleDeleteDepartment} // Confirm delete
+        item={"department"}
+      />
     </div>
   );
 };

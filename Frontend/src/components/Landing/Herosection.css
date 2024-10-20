@@ -1,0 +1,19 @@
+* {
+    box-sizing: border-box;
+  }
+  .hero-section {
+    background-image: url('../assets/your-image.jpg'); /* Use the actual image path */
+    background-size: contain; /* Ensure the image covers the hero section properly */
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: none; /* Remove any blur filter */
+    opacity: 1; /* Ensure full opacity */
+  }
+  
+  .hero-section img {
+    width: 90%; /* Ensure the image fits the container */
+    height: auto;
+    filter: none; /* Remove any blur effect */
+    opacity: 1;
+  }
+  

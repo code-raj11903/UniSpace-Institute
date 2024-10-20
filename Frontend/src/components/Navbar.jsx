@@ -1,10 +1,11 @@
-//src/components/Navbar.jsx
-
-import React, { useState , useContext} from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import logo from '../assets/UniSpaceLogo.png';
+import './Custom.css';
+import profileAvatar from '../assets/6858504.png';
+
 const Navbar = () => {
   const { user, setUser } = useContext(AuthContext); // Use setUser from context
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -40,53 +41,67 @@ const Navbar = () => {
   };
 
   return (
-   
-
-    <header className="bg-gray-200 shadow-lg p-4 flex justify-around items-center space-x- 10">
-       <div className="flex items-center mx-1 ">
-        <Link to="/dashboard" className="text-xl font-bold flex items-center">
-          <img src={logo} alt="UniSpace Logo" className="w-10 h-10 mr-2" />
-          <h1 className="text-2xl font-bold">UniSpace</h1>
+    <header className="navbar-container">
+      <div className="navbar-logo">
+        <Link to="/" className="navbar-brand">
+          <img src={logo} alt="UniSpace Logo" className="navbar-logo-image" />
         </Link>
+        <h1 className="navbar-title">UniSpace</h1>
       </div>
-  
-      <nav className="flex space-x-12"> 
-  
-        <Link to="/dashboard" className="hover:bg-blue-500 p-2 rounded">Dashboard</Link>
-        <Link to="/resources" className="hover:bg-blue-500 p-2 rounded">Resources</Link>
-        {user?.role === 'institute' && (
-          <Link to="/departments" className="hover:bg-blue-500 p-2 rounded">Manage Departments</Link>
-        )}
-        <Link to="/orders" className="hover:bg-blue-500 p-2 rounded">Orders</Link>
-      </nav>
-      
-      {/* Profile Dropdown */}
-      <div className="relative">
-        <button
-          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          className="flex items-center justify-center w-10 h-10 bg-gray-300 rounded-full"
-        >
-          {/* <img
-            src={profileIcon} 
-            alt="Profile"
-            className="rounded-full w-full h-full" /> */}
-        </button>
-        {isDropdownOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
-            <Link to="/settings" className="block px-4 py-2 text-gray-700 hover:bg-gray-200"  onClick={()=> setIsDropdownOpen(false)}>Settings</Link>
-            <button
-              onClick={handleLogout}
-              className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200"
-            >
-              Log out
-            </button>
-          </div>
-        )}
-      </div>
+
+      {/* Only show navbar links if the user is logged in */}
+      {user && (
+        <nav className="navbar-links">
+          <Link to="/dashboard" className="navbar-link">
+            Dashboard
+          </Link>
+          <Link to="/resources" className="navbar-link">
+            Resources
+          </Link>
+          {user?.role === 'institute' && (
+            <Link to="/departments" className="navbar-link">
+              Manage Departments
+            </Link>
+          )}
+          <Link to="/orders" className="navbar-link">
+            Orders
+          </Link>
+        </nav>
+      )}
+
+      {/* Profile Dropdown, only show when user is logged in */}
+      {user && (
+        <div className="navbar-profile">
+          <button
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            className="navbar-profile-button"
+          >
+            {/* Profile Icon using an Image */}
+            <img
+              src={profileAvatar}  // Correct path for the avatar
+              alt="Profile"
+              className="navbar-profile-avatar"
+            />
+          </button>
+
+          {isDropdownOpen && (
+            <div className="navbar-dropdown">
+              <Link
+                to="/settings"
+                className="navbar-dropdown-item"
+                onClick={() => setIsDropdownOpen(false)}
+              >
+                Settings
+              </Link>
+              <button onClick={handleLogout} className="navbar-dropdown-item">
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </header>
   );
 };
 
 export default Navbar;
-
-

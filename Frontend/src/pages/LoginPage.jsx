@@ -56,7 +56,7 @@ const LoginPage = () => {
         <h2 className="text-2xl font-bold mb-4 text-center">Log in to your account</h2>
 
         <div className="flex justify-around mb-6">
-          <button className="bg-red-500 text-white py-2 px-4 rounded">
+          <button className="bg-blue-500 text-white py-2 px-4 rounded">
             Log in with Google
           </button>
         </div>
@@ -96,14 +96,14 @@ const LoginPage = () => {
           <div className="mb-4 flex justify-center">
             <button
               type="button"
-              className={`mr-2 p-2 border rounded ${loginType === 'institute' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              className={`mr-2 p-2 border rounded ${loginType === 'institute' ? 'bg-dark-blue-600 text-white' : 'bg-gray-200'}`}
               onClick={() => setLoginType('institute')}
             >
               Institute Login
             </button>
             <button
               type="button"
-              className={`ml-2 p-2 border rounded ${loginType === 'department' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+              className={`ml-2 p-2 border rounded ${loginType === 'department' ? 'bg-dark-blue-600 text-white' : 'bg-gray-200'}`}
               onClick={() => setLoginType('department')}
             >
               Department Login
@@ -112,7 +112,7 @@ const LoginPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition duration-300"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-red-600 transition duration-300"
           >
             Log In
           </button>

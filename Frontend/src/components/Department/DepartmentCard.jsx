@@ -6,6 +6,7 @@ const DepartmentCard = ({ department, onDelete }) => {
       <h3 className="text-xl font-bold">{department.name}</h3>
       <p>Email: {department.email}</p>
       <p>Location: {department.location}</p>
+      <p>Phone: {department.phone}</p>
       <div className="mt-4">
         <button
           onClick={onDelete}

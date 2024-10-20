@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext, useState } from 'react';
 import ResourceCard from '../components/Resource/ResourceCard';
+import { toast } from 'react-toastify';
 import AddEditResourceModal from '../components/Resource/AddEditResourceModal';
+import ConfirmDeleteModal from '../components/Department/ConfirmDeleteModal';
+import { AuthContext } from '../context/AuthContext';
 
 const ResourcesPage = () => {
   const [resources, setResources] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editResource, setEditResource] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [resourceToDelete, setResourceToDelete] = useState(null);
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     fetchResources();
-  }, [currentPage, searchQuery]);
+  }, [searchQuery]);
 
   const fetchResources = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/resources?page=${currentPage}&search=${searchQuery}`);
+      const res = await fetch(`/api/v1/${user.role}/resources`);
       const data = await res.json();
-      setResources(data.resources);
-      setTotalPages(data.totalPages);
+      setResources(data);
     } catch (error) {
       console.error('Error fetching resources:', error);
     } finally {
@@ -29,28 +32,55 @@ const ResourcesPage = () => {
     }
   };
 
-  const handleDeleteResource = async (resourceId) => {
-    if (window.confirm('Are you sure you want to delete this resource?')) {
+  const handleToggleAvailability = async (resourceId, newAvailability) => {
+    try {
+      await fetch(`/api/v1/${user.role}/resources/update/${resourceId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ availability: newAvailability }),
+      });
+      // Optimistically update the resource in the state without refetching
+      setResources((prevResources) =>
+        prevResources.map((resource) =>
+          resource._id === resourceId ? { ...resource, availability: newAvailability } : resource
+        )
+      );
+    } catch (error) {
+      console.error('Error updating availability:', error);
+    }
+  };
+
+  const handleDeleteResource = async () => {
+    if (resourceToDelete) {
       try {
-        await fetch(`/api/resources/${resourceId}`, { method: 'DELETE' });
-        fetchResources(); // Refresh the list
+        await fetch(`/api/v1/${user.role}/resources/delete/${resourceToDelete}`, { method: 'DELETE' });
+        setResources((prevResources) => prevResources.filter((r) => r._id !== resourceToDelete));
+        setDeleteModalOpen(false); // Close modal after deletion
+        toast.success('Deleted successful!');
       } catch (error) {
+        toast.error(error.message);
         console.error('Error deleting resource:', error);
       }
     }
   };
-
+  // Open delete confirmation modal
+  const openDeleteModal = (resourceId) => {
+    setResourceToDelete(resourceId);
+    setDeleteModalOpen(true);
+  };
+  
   return (
     <div className="container mx-auto p-4">
       {/* Search and Add Button */}
       <div className="flex justify-between mb-4">
         <input
           type="text"
-          className="w-1/2 p-2 border border-gray-300 rounded"
+          className="w-1/2 p-2 border border-gray-300 rounded bg-white text-black"
           placeholder="Search resources..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+
         <button
           onClick={() => setShowModal(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
@@ -68,32 +98,18 @@ const ResourcesPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {resources.map((resource) => (
             <ResourceCard
-              key={resource.id}
+              key={resource._id}
               resource={resource}
               onEdit={() => {
                 setEditResource(resource);
                 setShowModal(true);
               }}
-              onDelete={() => handleDeleteResource(resource.id)}
+              onDelete={() => openDeleteModal(resource._id)}
+              onToggleAvailability={handleToggleAvailability} // Pass toggle handler
             />
           ))}
         </div>
       )}
-
-      {/* Pagination */}
-      <div className="flex justify-center mt-4">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            className={`mx-1 px-3 py-2 border ${
-              currentPage === i + 1 ? 'bg-blue-500 text-white' : 'bg-white text-gray-800'
-            } rounded`}
-            onClick={() => setCurrentPage(i + 1)}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
 
       {/* Add/Edit Resource Modal */}
       {showModal && (
@@ -107,6 +123,14 @@ const ResourcesPage = () => {
           onSuccess={fetchResources}
         />
       )}
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmDeleteModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)} // Close modal on No
+        onConfirm={handleDeleteResource} // Confirm delete
+        item ={"resource"}
+      />
     </div>
   );
 };
