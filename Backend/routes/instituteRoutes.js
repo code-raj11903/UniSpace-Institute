@@ -10,7 +10,7 @@ import {
     addResource,
     updateResource,
     deleteResource,
-    updateInstituteProfile
+    updateInstituteProfile, getInstituteDashboardData
 } from "../controllers/instituteController.js";
 import isAuthenticatedInstitute from "../middlewares/isAuthenticatedInstitute.js";
 
@@ -20,6 +20,9 @@ const router = express.Router();
 router.post("/register", registerInstitute);
 router.post("/login", loginInstitute);
 router.get("/logout", logoutInstitute);
+
+// all info
+router.get("/dashboard",isAuthenticatedInstitute, getInstituteDashboardData)
 
 // Department management (by institute)
 router.get("/department", isAuthenticatedInstitute, getAllDepartments);

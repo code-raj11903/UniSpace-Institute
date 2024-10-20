@@ -1,5 +1,5 @@
 import express from "express";
-import { loginDepartment, logoutDepartment,getAllDepartmentResources, addResource, updateResource, deleteResource, getOrderHistory, updateDepartmentProfile } from "../controllers/departmentController.js";
+import { loginDepartment, logoutDepartment,getAllDepartmentResources, addResource, updateResource, deleteResource, getOrderHistory, updateDepartmentProfile, getDepartmentDashboardData } from "../controllers/departmentController.js";
 import isAuthenticatedDepartment from "../middlewares/isAuthenticatedDepartment.js";
 
 const router = express.Router();
@@ -9,7 +9,9 @@ router.post("/login", loginDepartment);
 router.get("/logout", logoutDepartment);
 
 // Resource management (by department)
-router.get("/resources", getAllDepartmentResources);
+// all info
+router.get("/dashboard",isAuthenticatedDepartment, getDepartmentDashboardData)
+router.get("/resources", isAuthenticatedDepartment, getAllDepartmentResources);
 router.post("/resources/add", isAuthenticatedDepartment, addResource);
 router.put("/resources/update/:id", isAuthenticatedDepartment, updateResource);
 router.delete("/resources/delete/:id", isAuthenticatedDepartment, deleteResource);

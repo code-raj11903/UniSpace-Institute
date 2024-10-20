@@ -4,7 +4,7 @@ import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import { v2 as cloudinary } from "cloudinary";
 import Department from "../models/departmentModel.js";
 import Resource from "../models/resourceModel.js";
-
+import mongoose from 'mongoose';
 const registerInstitute = async (req, res) => {
   try {
     const { name, email, password, location, phone } = req.body;
@@ -338,6 +338,53 @@ const updateInstituteProfile = async (req, res) => {
         console.log("Error in updateInstituteProfile: ", error.message);
     }
 };
+const getInstituteDashboardData = async (req, res) => {
+  try {
+    const instituteId = req.user.id;
+
+    const institute = await Institute.findById(instituteId)
+      .populate('departments')
+      .populate('resources');
+    // Ensure that `departments` and `resources` fields are defined in your `Institute` schema and properly populated.
+
+    const totalDepartments = institute.departments.length;
+    const totalResources = institute.resources.length;
+
+    // Example aggregation to get orders placed per month (uncomment if using orders):
+    // const orderStats = await Booking.aggregate([
+    //   { $match: { institute_id: new mongoose.Types.ObjectId(instituteId) } },
+    //   {
+    //     $group: {
+    //       _id: { $month: '$createdAt' },
+    //       totalOrders: { $sum: 1 },
+    //     },
+    //   },
+    // ]);
+
+    // Get resources added per month
+    const resourceStats = await Resource.aggregate([
+      { $match: { institute_id: new mongoose.Types.ObjectId(instituteId) } },
+      {
+        $group: {
+          _id: { $month: '$createdAt' },
+          totalResources: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      totalDepartments,
+      totalResources,
+      // totalRevenue, // Uncomment if using revenue calculation from orders
+      // orderStats,  // Uncomment if using order statistics
+      resourceStats,
+    });
+  } catch (error) {
+    console.error('Error in getInstituteDashboardData:', error.message);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
+
 
 export {
     registerInstitute,
@@ -350,5 +397,5 @@ export {
     addResource,
     updateResource,
     deleteResource,
-    updateInstituteProfile
+    updateInstituteProfile, getInstituteDashboardData
 };

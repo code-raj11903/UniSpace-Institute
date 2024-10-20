@@ -4,7 +4,7 @@ import Institute from "../models/instituteModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import { v2 as cloudinary } from "cloudinary";
-
+import mongoose from 'mongoose';
 // Login department
  const loginDepartment = async (req, res) => {
     try {
@@ -249,7 +249,48 @@ const updateDepartmentProfile = async (req, res) => {
     console.log("Error in updateDepartmentProfile: ", error.message);
   }
 };
+const getDepartmentDashboardData = async (req, res) => {
+  try {
+    const departmentId = req.user.id;
 
+    const department = await Department.findById(departmentId)
+      .populate('resources');  
+      // orders
+
+    const totalResources = department.resources.length;
+    // const totalRevenue = department.orders.reduce((acc, order) => acc + order.amount, 0);
+
+    // Get orders placed per month for department
+    // const orderStats = await Booking.aggregate([
+    //   { $match: { department_id: new mongoose.Types.ObjectId(departmentId) } },
+    //   {
+    //     $group: {
+    //       _id: { $month: '$createdAt' },
+    //       totalOrders: { $sum: 1 },
+    //     },
+    //   },
+    // ]);
+    const resourceStats = await Resource.aggregate([
+      { $match: { department_id: new mongoose.Types.ObjectId(departmentId) } },
+      {
+        $group: {
+          _id: { $month: '$createdAt' },
+          totalResources: { $sum: 1 },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      totalResources,
+      // totalRevenue,
+      // orderStats,
+      resourceStats
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server Error' });
+  }
+};
 
 export {
   loginDepartment,
@@ -259,6 +300,7 @@ export {
   updateResource,
   deleteResource,
   getOrderHistory,
-  updateDepartmentProfile
+  updateDepartmentProfile,
+  getDepartmentDashboardData
   
 };
