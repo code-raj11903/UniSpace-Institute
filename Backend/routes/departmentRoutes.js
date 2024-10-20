@@ -9,7 +9,7 @@ router.post("/login", loginDepartment);
 router.get("/logout", logoutDepartment);
 
 // Resource management (by department)
-router.get("/resources", isAuthenticatedDepartment, getAllDepartmentResources);
+router.get("/resources", getAllDepartmentResources);
 router.post("/resources/add", isAuthenticatedDepartment, addResource);
 router.put("/resources/update/:id", isAuthenticatedDepartment, updateResource);
 router.delete("/resources/delete/:id", isAuthenticatedDepartment, deleteResource);

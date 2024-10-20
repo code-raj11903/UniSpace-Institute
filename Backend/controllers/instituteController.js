@@ -225,7 +225,7 @@ const addResource = async (req, res) => {
   const updateResource = async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, location, type, description, price_per_day, image_url } = req.body;
+        const { name, location, type, description, price_per_day, image_url,availability } = req.body;
 
         // Find the existing resource
         const resource = await Resource.findById(id);
@@ -250,6 +250,7 @@ const addResource = async (req, res) => {
         resource.description = description || resource.description;
         resource.price_per_day = price_per_day || resource.price_per_day;
         resource.image_url = updatedImageUrl;
+        resource.availability = availability;
 
         const updatedResource = await resource.save();
         res.status(200).json(updatedResource);
@@ -325,11 +326,12 @@ const updateInstituteProfile = async (req, res) => {
 
         // Return the updated profile (excluding the password)
         res.status(200).json({
-            _id: institute._id,
-            name: institute.name,
-            email: institute.email,
-            location: institute.location,
-            phone: institute.phone,
+          _id: institute._id,
+          name: institute.name,
+          email: institute.email,
+          location: institute.location,
+          phone: institute.phone,
+          role: institute.role
         });
     } catch (error) {
         res.status(500).json({ error: error.message });

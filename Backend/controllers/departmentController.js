@@ -105,7 +105,7 @@ const addResource = async (req, res) => {
 const updateResource = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, location, type, description, price_per_day, image_url } = req.body;
+    const { name, location, type, description, price_per_day, image_url, availability } = req.body;
 
     // Find the existing resource
     const resource = await Resource.findById(id);
@@ -130,6 +130,7 @@ const updateResource = async (req, res) => {
     resource.description = description || resource.description;
     resource.price_per_day = price_per_day || resource.price_per_day;
     resource.image_url = updatedImageUrl;
+    resource.availability = availability;
 
     const updatedResource = await resource.save();
     res.status(200).json(updatedResource);
@@ -238,8 +239,10 @@ const updateDepartmentProfile = async (req, res) => {
     res.status(200).json({
       _id: department._id,
       name: department.name,
+      email: department.email,
       location: department.location,
       phone: department.phone,
+      role:   department.role
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
