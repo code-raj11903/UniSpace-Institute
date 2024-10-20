@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef,useContext, useState } from 'react';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import { toast } from 'react-toastify';
 import { AuthContext } from '../../context/AuthContext';
