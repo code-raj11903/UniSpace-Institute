@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Line, Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
-import { AuthContext } from "../context/AuthContext"; 
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { AuthContext } from "../context/AuthContext";
 
 // Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
 
 const Dashboard = () => {
   const { user } = useContext(AuthContext);
@@ -15,12 +15,11 @@ const Dashboard = () => {
     const fetchDashboardData = async () => {
       try {
         let url = `/api/v1/${user.role}/dashboard`; // Dynamic based on user role
-        
+
         const response = await fetch(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            // Add token if required
           },
         });
 
@@ -36,22 +35,12 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-    
+
     fetchDashboardData();
   }, [user.role]);
 
-  if (loading) return <div>Loading...</div>;
-  if (!dashboardData) return <div>No data available</div>;
-
-  // const revenueChartData = {
-  //   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-  //   datasets: [{
-  //     label: 'Revenue',
-  //     data: dashboardData.orderStats.map(stat => stat.totalOrders),
-  //     borderColor: '#6366F1',
-  //     fill: false,
-  //   }],
-  // };
+  if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
+  if (!dashboardData) return <div className="flex items-center justify-center h-screen">No data available</div>;
 
   const resourceChartData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
@@ -63,33 +52,24 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="grid grid-cols-4 gap-4 mb-6">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 -mt-8"> {/* Reduced top margin */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 max-w-xl"> {/* Reduced grid size */}
         {/* Metrics */}
         {user.role === 'institute' && (
-          <div className="bg-blue-500 text-white p-4 rounded shadow-md">
-            <h3 className="text-xl font-semibold">DEPARTMENTS</h3>
-            <p className="text-3xl">{dashboardData.totalDepartments || 'N/A'}</p>
+          <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md text-center text-lg w-64 h-32"> {/* Decreased box size */}
+            <h3 className="text-2xl font-semibold">DEPARTMENTS</h3>
+            <p className="text-4xl">{dashboardData.totalDepartments || 'N/A'}</p>
           </div>
         )}
-        <div className="bg-orange-500 text-white p-4 rounded shadow-md">
-          <h3 className="text-xl font-semibold">RESOURCES</h3>
-          <p className="text-3xl">{dashboardData.totalResources}</p>
+        <div className="bg-orange-500 text-white p-6 rounded-lg shadow-md text-center text-lg w-64 h-32"> {/* Decreased box size */}
+          <h3 className="text-2xl font-semibold">RESOURCES</h3>
+          <p className="text-4xl">{dashboardData.totalResources}</p>
         </div>
-        {/* <div className="bg-red-500 text-white p-4 rounded shadow-md">
-          <h3 className="text-xl font-semibold">REVENUE</h3>
-          <p className="text-3xl">${dashboardData.totalRevenue.toLocaleString()}</p>
-        </div> */}
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-2 gap-4">
-        {/* <div className="bg-white p-4 rounded shadow-md">
-          <Line data={revenueChartData} />
-        </div> */}
-        <div className="bg-white p-4 rounded shadow-md">
-          <Bar data={resourceChartData} />
-        </div>
+      <div className="bg-white p-4 rounded-lg shadow-md w-full max-w-xl"> {/* Decreased chart container */}
+        <Bar data={resourceChartData} />
       </div>
     </div>
   );
