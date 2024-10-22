@@ -46,12 +46,12 @@ app.use("/api/v1/institute", instituteRouter);
 app.use("/api/v1/department", departmentRouter);
 
 if (process.env.NODE_ENV === "production") {
-	app.use(express.static(path.join(__dirname, "/Frontend/dist")));
+  app.use(express.static(path.join(__dirname, "/Frontend/dist")));
 
-	// react app
-	app.get("*", (req, res) => {
-		res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
-	});
+  // Serve React frontend
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "Frontend", "dist", "index.html"));
+  });
 }
 // Start the server
 app.listen(PORT, () => {

@@ -26,7 +26,7 @@ const ResourceCard = ({ resource, onEdit, onDelete, onToggleAvailability }) => {
         {/* Name and Toggle aligned horizontally */}
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-semibold text-gray-800">{resource.name}</h3>
-          <Switcher6 isChecked={isAvailable} handleCheckboxChange={handleToggle} />
+          <Switcher isChecked={isAvailable} handleCheckboxChange={handleToggle} />
         </div>
         
         <p className="text-gray-600 mt-2">
