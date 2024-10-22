@@ -1,110 +1,155 @@
-* {
-    box-sizing: border-box;
-  }
+/* Default navbar styling */
 .navbar-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 16px; /* Reduced padding for a shorter navbar */
-    background-color: #0757f8; /* Dark background color */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 80px; /* Set a fixed height for a smaller navbar */
-    
-  }
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  position: relative;
+  z-index: 1000;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Creates an equal gap between the logo and the links */
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar-logo-image {
+  height: 50px;
+}
+
+.navbar-title {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Equal spacing between links */
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: lightgray;
+}
+
+.navbar-profile {
+  position: relative;
+}
+
+.navbar-profile-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-profile-avatar {
+  height: 40px;
+  border-radius: 50%;
+}
+
+.navbar-dropdown {
+  position: absolute;
+  padding: 0.5rem;
+  top: 50px;
+  right: 0;
+  background: rgb(255, 255, 255);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: auto;
+  z-index: 1000;
+}
+
+.navbar-dropdown-item {
+  display: block;
+  padding: 0.5rem;
+  text-align: left;
+  text-decoration: none;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+.navbar-dropdown-item :hover
+{
+  background-color: gray;
+}
+.logout
+{
+   background-color: gray;
+}
+
+/* Mobile-specific styles */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-toggle-icon {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.navbar-links.active {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  align-items: flex-start;
   
-  /* Logo and Title Inline */
-  .navbar-logo {
-    display: flex;
-    align-items: center; /* Align logo and text vertically */
-    margin-left: 10px; /* Shift the logo and UniSpace title to the right */
-  }
-  
-  .navbar-logo-image {
-    width: 36px; /* Slightly reduce logo size */
-    height: 36px;
-    /* Space between logo and text */
-  }
-  
-  .navbar-title {
-    font-size: 1.5rem; /* Adjust font size for a smaller appearance */
-    color: #fff; /* White text */
-    font-weight: bold;
-    margin: 0; /* Ensure no extra margins */
-  }
-  
-  /* Navbar Links */
+  background:#007bff;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+.navbar-logo-mobile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.navbar-link {
+  margin-bottom: 0.5rem;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
   .navbar-links {
-    display: flex;
-    gap: 25px; /* Adjust spacing between links */
+    display: none;
   }
-  
-  .navbar-link {
-    color: #fff;
-    font-size: 1.2rem; /* Slightly smaller text for links */
-    padding: 8px 12px;
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .navbar-link:hover {
-    background-color: #2d3748; /* Slightly lighter hover effect */
-  }
-  
-  /* Profile Dropdown */
-  .navbar-profile {
-    position: relative;
-    margin-right: -10px; /* Moves the profile container slightly left */
-  }
-  
-  .navbar-profile-button {
-    width: 36px; /* Profile button size */
-    height: 36px;
-    border-radius: 50%; /* Circular shape */
-    border: none; /* Remove border */
-    cursor: pointer;
-    margin-left: -300px; /* Adjust button position */
-    
-    /* Use background image */
-    background-image: url('../assets/6858504.png'); /* Ensure correct path */
-    background-size: cover; /* Ensure the image covers the button properly */
-    background-position: center;
-    background-repeat: no-repeat;
-    box-shadow: none; /* Remove any shadow */
-  }
-  
-  .navbar-profile-avatar {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%; /* Ensure the image is circular */
-    object-fit: cover; /* Ensure the image fits within the button */
-    border: none; /* Remove any default border */
-  }
-  
-  .navbar-dropdown {
-    position: absolute;
-    top: 50px;
-    left: -300px; /* Move dropdown to the same left position */
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    overflow: hidden;
-  }
-  
-  .navbar-dropdown-item {
+
+  .navbar-toggle {
     display: block;
-    width: 100%;
-    padding: 10px 30px; /* Increase only horizontal padding (left and right) */
-    text-align: left;
-    color: #1a202c;
-    text-decoration: none;
-    background-color: #fff;
-    transition: background-color 0.3s ease;
-    cursor: pointer;
   }
-  
-  .navbar-dropdown-item:hover {
-    background-color: #f1f1f1;
+
+  .navbar-left {
+    display: none; /* Hide logo on desktop in mobile view */
   }
-  
+
+  .navbar-profile {
+    margin-left: auto;
+  }
+
+  .navbar-links.active .navbar-logo-mobile {
+    display: flex; /* Display the logo inside the hamburger menu */
+  }
+}

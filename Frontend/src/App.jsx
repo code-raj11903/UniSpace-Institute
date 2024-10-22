@@ -10,6 +10,7 @@ import SettingsPage from './pages/SettingsPage';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './pages/Dashboard';
+import OrdersPage from './pages/OrdersPage';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -79,6 +80,10 @@ const AppRoutes = ({ isDarkMode, toggleDarkMode }) => {
         <Route
           path="/departments"
           element={<ProtectedRoute><DepartmentsPage /></ProtectedRoute>}
+        />
+        <Route
+          path="/orders"
+          element={<ProtectedRoute><OrdersPage /></ProtectedRoute>}
         />
         <Route
           path="/settings"

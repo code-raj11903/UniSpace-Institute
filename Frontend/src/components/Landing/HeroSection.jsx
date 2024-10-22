@@ -12,7 +12,7 @@ const HeroSection = () => {
 
       {/* Content */}
       <div className="text-center text-white relative z-10">
-        <h1 className="text-5xl font-bold drop-shadow-lg md:text-6xl lg:text-7xl">
+        <h1 className="text-5xl font-bold drop-shadow-lg md:text-6xl lg:text-7xl ">
           Welcome to UniSpace
         </h1>
         <p className="mt-4 text-xl md:text-2xl lg:text-3xl drop-shadow-md">

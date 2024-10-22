@@ -19,7 +19,7 @@ const DepartmentsPage = () => {
   const fetchDepartments = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/v1/institute/department`, {
+      const res = await fetch(`/api/v1/institute/departments`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

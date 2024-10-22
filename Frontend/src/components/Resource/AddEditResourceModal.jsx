@@ -18,6 +18,7 @@ const AddEditResourceModal = ({ isOpen, onClose, resource, onSuccess }) => {
   const { handleImageChange, imgUrl,setImgUrl } = usePreviewImg();
 
 
+
   const handleSubmit = async () => {
     // Validate the price per day to ensure it's not negative
     if (form.price_per_day < 0) {
@@ -116,7 +117,7 @@ const AddEditResourceModal = ({ isOpen, onClose, resource, onSuccess }) => {
             Upload Image
           </button>
           <input type="file" hidden ref={fileRef} onChange={handleImageChange} />
-          {imgUrl && <img src={imgUrl || resource?.image_url} alt="Resource" className="mt-2" />}
+          {<img src={imgUrl ||resource?.image_url} alt="Resource" className="mt-2" />}
         </div>
 
         {/* Action Buttons */}
@@ -128,8 +129,30 @@ const AddEditResourceModal = ({ isOpen, onClose, resource, onSuccess }) => {
             className="bg-blue-500 text-white px-4 py-2 rounded"
             onClick={handleSubmit}
             disabled={loading}
-          >
-            {loading ? 'Saving...' : 'Save'}
+          >{loading ? (
+            <svg
+              className="animate-spin h-5 w-5 text-white mr-2"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              ></circle>
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              ></path>
+            </svg>
+          ) : (
+            'Save'
+          )}
           </button>
         </div>
       </div>

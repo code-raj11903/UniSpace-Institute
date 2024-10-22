@@ -7,6 +7,7 @@ import { AuthContext } from '../context/AuthContext';
 
 const ResourcesPage = () => {
   const [resources, setResources] = useState([]);
+  const [filteredResources, setFilteredResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -17,7 +18,17 @@ const ResourcesPage = () => {
 
   useEffect(() => {
     fetchResources();
-  }, [searchQuery]);
+  }, []);
+
+  useEffect(() => {
+    // Filter resources by name and location based on the search query
+    const filtered = resources.filter(
+      (resource) =>
+        resource.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        resource.location.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    setFilteredResources(filtered);
+  }, [searchQuery, resources]);
 
   const fetchResources = async () => {
     setLoading(true);
@@ -63,12 +74,13 @@ const ResourcesPage = () => {
       }
     }
   };
+
   // Open delete confirmation modal
   const openDeleteModal = (resourceId) => {
     setResourceToDelete(resourceId);
     setDeleteModalOpen(true);
   };
-  
+
   return (
     <div className="container mx-auto p-4">
       {/* Search and Add Button */}
@@ -76,7 +88,7 @@ const ResourcesPage = () => {
         <input
           type="text"
           className="w-1/2 p-2 border border-gray-300 rounded bg-white text-black"
-          placeholder="Search resources..."
+          placeholder="Search resources by name or location..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -96,7 +108,7 @@ const ResourcesPage = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {resources.map((resource) => (
+          {filteredResources.map((resource) => (
             <ResourceCard
               key={resource._id}
               resource={resource}
@@ -129,7 +141,7 @@ const ResourcesPage = () => {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)} // Close modal on No
         onConfirm={handleDeleteResource} // Confirm delete
-        item ={"resource"}
+        item={"resource"}
       />
     </div>
   );
