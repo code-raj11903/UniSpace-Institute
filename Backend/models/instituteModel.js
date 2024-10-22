@@ -32,7 +32,7 @@ const InstituteSchema = new mongoose.Schema({
     default: 'institute'},
   departments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Department" }],
   resources: [{ type: mongoose.Schema.Types.ObjectId, ref: "Resource" }],
-  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Booking" }],
+  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   createdAt: {
     type: Date,
     default: Date.now

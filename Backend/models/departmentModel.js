@@ -31,7 +31,7 @@ const DepartmentSchema = new mongoose.Schema({
     default: 'department' },
   institute_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Institute', required: [true, "Institute reference is required"] },
   resources: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Resource' }],
-  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
+  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   createdAt: {
     type: Date,
     default: Date.now

@@ -5,8 +5,7 @@ const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, "Please enter your Name!"],
-    minLength: [3, "Name must contain at least 3 Characters!"],
-    maxLength: [30, "Name cannot exceed 30 Characters!"]
+    
   },
   email: {
     type: String,
@@ -14,7 +13,7 @@ const UserSchema = new mongoose.Schema({
     validate: [validator.isEmail, "Please provide a valid Email!"],
     unique: true
   },
-  phone: {
+  mobile: {
     type: String, 
     required: [true, "Please enter your Phone Number!"]
   },
@@ -24,8 +23,10 @@ const UserSchema = new mongoose.Schema({
     minLength: [8, "Password must contain at least 8 characters!"],
     select: false
   },
-  bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Booking' }],
-
+  bookings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
+  address:{
+    type:String,
+  },
   createdAt: {
     type: Date,
     default: Date.now

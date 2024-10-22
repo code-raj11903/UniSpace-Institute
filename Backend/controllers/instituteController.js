@@ -4,6 +4,8 @@ import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import { v2 as cloudinary } from "cloudinary";
 import Department from "../models/departmentModel.js";
 import Resource from "../models/resourceModel.js";
+import Order from "../models/orderModel.js";
+import User from "../models/userModel.js"
 import mongoose from 'mongoose';
 const registerInstitute = async (req, res) => {
   try {
@@ -285,7 +287,30 @@ const addResource = async (req, res) => {
         console.log("Error in deleteResource:", error.message);
     }
 };
+const getOrderHistory = async (req, res) => {
+  try {
+    const instituteId = req.user.id;
 
+    // Find the institute and populate orders with user and resource details
+    const institute = await Institute.findById(instituteId)
+      .populate({
+        path: 'orders',
+        populate: [
+          { path: 'user_id', select: 'name email mobile address' }, // Populate user details (name and email)
+          { path: 'resource_ids', select: 'name type description price_per_day image_url' }, // Populate resource details
+        ]
+      });
+
+    if (!institute) {
+      return res.status(404).json({ message: "Institute not found" });
+    }
+
+    res.status(200).json(institute.orders);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    console.log("Error in getOrderHistory: ", error.message);
+  }
+};
 // Update Institute Profile
 const updateInstituteProfile = async (req, res) => {
     try {
@@ -342,41 +367,51 @@ const getInstituteDashboardData = async (req, res) => {
   try {
     const instituteId = req.user.id;
 
+    // Step 1: Find the institute and populate orders and resources
     const institute = await Institute.findById(instituteId)
       .populate('departments')
+      .populate('orders')  // This will populate the orders array with order data
       .populate('resources');
-    // Ensure that `departments` and `resources` fields are defined in your `Institute` schema and properly populated.
 
+    if (!institute) {
+      return res.status(404).json({ message: 'Institute not found' });
+    }
+
+    // Step 2: Calculate total number of departments and resources
     const totalDepartments = institute.departments.length;
     const totalResources = institute.resources.length;
 
-    // Example aggregation to get orders placed per month (uncomment if using orders):
-    // const orderStats = await Booking.aggregate([
-    //   { $match: { institute_id: new mongoose.Types.ObjectId(instituteId) } },
-    //   {
-    //     $group: {
-    //       _id: { $month: '$createdAt' },
-    //       totalOrders: { $sum: 1 },
-    //     },
-    //   },
-    // ]);
+    // Step 3: If orders are populated, calculate the total revenue and any stats
+    const totalRevenue = institute.orders.reduce((acc, order) => acc + order.total_amount, 0);
 
-    // Get resources added per month
-    const resourceStats = await Resource.aggregate([
-      { $match: { institute_id: new mongoose.Types.ObjectId(instituteId) } },
+    // Step 4: Perform aggregation on the `orders` array for stats
+    const orderStats = await Order.aggregate([
+      { $match: { _id: { $in: institute.orders.map(order => order._id) } } }, // Match only orders for this institute
       {
         $group: {
-          _id: { $month: '$createdAt' },
+          _id: { $month: '$date' },  // Group by the month of the order date
+          totalOrders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Step 5: Perform aggregation on the `resources` array for stats
+    const resourceStats = await Resource.aggregate([
+      { $match: { _id: { $in: institute.resources.map(resource => resource._id) } } }, // Match only resources for this institute
+      {
+        $group: {
+          _id: { $month: '$createdAt' },  // Group by the month of resource creation
           totalResources: { $sum: 1 },
         },
       },
     ]);
 
+    // Step 6: Return the aggregated data as JSON
     res.status(200).json({
       totalDepartments,
       totalResources,
-      // totalRevenue, // Uncomment if using revenue calculation from orders
-      // orderStats,  // Uncomment if using order statistics
+      totalRevenue,
+      orderStats,
       resourceStats,
     });
   } catch (error) {
@@ -397,5 +432,6 @@ export {
     addResource,
     updateResource,
     deleteResource,
-    updateInstituteProfile, getInstituteDashboardData
+    updateInstituteProfile, getInstituteDashboardData,
+    getOrderHistory
 };

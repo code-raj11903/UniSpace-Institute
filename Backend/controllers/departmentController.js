@@ -1,6 +1,8 @@
 import Department from "../models/departmentModel.js";
 import Resource from "../models/resourceModel.js";
 import Institute from "../models/instituteModel.js";
+import Order from "../models/orderModel.js";
+import User from "../models/userModel.js"
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateTokenAndSetCookie.js";
 import { v2 as cloudinary } from "cloudinary";
@@ -184,8 +186,13 @@ const getOrderHistory = async (req, res) => {
   try {
     const departmentId = req.user.id;
 
-    const department = await Department.findById(departmentId).populate('orders');
-    
+    const department = await Department.findById(departmentId).populate({
+      path: 'orders',
+      populate: [
+        { path: 'user_id', select: 'name email mobile address' }, // Populate user details (name and email)
+        { path: 'resource_ids', select: 'name type description price_per_day image_url' }, // Populate resource details
+      ]
+    });
     if (!department) {
       return res.status(404).json({ message: "Department not found" });
     }
@@ -253,41 +260,50 @@ const getDepartmentDashboardData = async (req, res) => {
   try {
     const departmentId = req.user.id;
 
+    // Step 1: Find the department and populate resources and orders
     const department = await Department.findById(departmentId)
-      .populate('resources');  
-      // orders
+      .populate('resources')  // Populating resources from Department
+      .populate('orders');    // Populating orders from Department
 
+    if (!department) {
+      return res.status(404).json({ message: 'Department not found' });
+    }
+
+    // Step 2: Calculate total resources and total revenue
     const totalResources = department.resources.length;
-    // const totalRevenue = department.orders.reduce((acc, order) => acc + order.amount, 0);
+    const totalRevenue = department.orders.reduce((acc, order) => acc + order.total_amount, 0);
 
-    // Get orders placed per month for department
-    // const orderStats = await Booking.aggregate([
-    //   { $match: { department_id: new mongoose.Types.ObjectId(departmentId) } },
-    //   {
-    //     $group: {
-    //       _id: { $month: '$createdAt' },
-    //       totalOrders: { $sum: 1 },
-    //     },
-    //   },
-    // ]);
-    const resourceStats = await Resource.aggregate([
-      { $match: { department_id: new mongoose.Types.ObjectId(departmentId) } },
+    // Step 3: Aggregate to get order stats (orders placed per month)
+    const orderStats = await Order.aggregate([
+      { $match: { _id: { $in: department.orders.map(order => order._id) } } },  // Match orders from department's order list
       {
         $group: {
-          _id: { $month: '$createdAt' },
+          _id: { $month: '$date' },  // Group by the month of the order date
+          totalOrders: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Step 4: Aggregate to get resource stats (resources added per month)
+    const resourceStats = await Resource.aggregate([
+      { $match: { _id: { $in: department.resources.map(resource => resource._id) } } },  // Match resources from department's resource list
+      {
+        $group: {
+          _id: { $month: '$createdAt' },  // Group by the month of resource creation
           totalResources: { $sum: 1 },
         },
       },
     ]);
 
+    // Step 5: Return the aggregated data as JSON
     res.status(200).json({
       totalResources,
-      // totalRevenue,
-      // orderStats,
+      totalRevenue,
+      orderStats,
       resourceStats
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error in getDepartmentDashboardData:', error.message);
     res.status(500).json({ error: 'Server Error' });
   }
 };

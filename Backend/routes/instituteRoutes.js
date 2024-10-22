@@ -10,6 +10,7 @@ import {
     addResource,
     updateResource,
     deleteResource,
+    getOrderHistory,
     updateInstituteProfile, getInstituteDashboardData
 } from "../controllers/instituteController.js";
 import isAuthenticatedInstitute from "../middlewares/isAuthenticatedInstitute.js";
@@ -25,7 +26,7 @@ router.get("/logout", logoutInstitute);
 router.get("/dashboard",isAuthenticatedInstitute, getInstituteDashboardData)
 
 // Department management (by institute)
-router.get("/department", isAuthenticatedInstitute, getAllDepartments);
+router.get("/departments", isAuthenticatedInstitute, getAllDepartments);
 router.post("/department/add", isAuthenticatedInstitute, addDepartment);
 router.delete("/department/delete/:id", isAuthenticatedInstitute, deleteDepartment);
 
@@ -38,6 +39,7 @@ router.put("/resources/update/:id", isAuthenticatedInstitute, updateResource);
 router.delete("/resources/delete/:id", isAuthenticatedInstitute, deleteResource);
 
 // Profile management
+router.get("/orders", isAuthenticatedInstitute, getOrderHistory);
 router.put("/profile", isAuthenticatedInstitute, updateInstituteProfile);
 
 export default router;
