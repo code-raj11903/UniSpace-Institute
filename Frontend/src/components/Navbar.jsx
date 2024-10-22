@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { toast } from 'react-toastify';
 import logo from '../assets/UniSpaceLogo.png';
-import './custom.css';
 import profileAvatar from '../assets/6858504.png';
 
 const Navbar = () => {

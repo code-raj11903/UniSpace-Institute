@@ -11,3 +11,158 @@ html, body {
 html::-webkit-scrollbar, body::-webkit-scrollbar {
   display: none;  /* Chrome, Safari, and Opera */
 }
+/* Default navbar styling */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background-color: #007bff;
+  position: relative;
+  z-index: 1000;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Creates an equal gap between the logo and the links */
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.navbar-logo-image {
+  height: 50px;
+}
+
+.navbar-title {
+  font-size: 1.5rem;
+  color: #fff;
+  margin-left: 0.5rem;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem; /* Equal spacing between links */
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.5rem;
+  transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: lightgray;
+}
+
+.navbar-profile {
+  position: relative;
+}
+
+.navbar-profile-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-profile-avatar {
+  height: 40px;
+  border-radius: 50%;
+}
+
+.navbar-dropdown {
+  position: absolute;
+  padding: 0.5rem;
+  top: 50px;
+  right: 0;
+  background: rgb(255, 255, 255);
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: auto;
+  z-index: 1000;
+}
+
+.navbar-dropdown-item {
+  display: block;
+  padding: 0.5rem;
+  text-align: left;
+  text-decoration: none;
+  color: #333;
+  transition: background-color 0.3s ease;
+}
+.navbar-dropdown-item :hover
+{
+  background-color: gray;
+}
+.logout
+{
+   background-color: gray;
+}
+
+/* Mobile-specific styles */
+.navbar-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar-toggle-icon {
+  font-size: 2rem;
+  color: #fff;
+}
+
+.navbar-links.active {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  align-items: flex-start;
+  
+  background:#007bff;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+}
+
+.navbar-logo-mobile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.navbar-link {
+  margin-bottom: 0.5rem;
+}
+
+/* Media queries */
+@media (max-width: 768px) {
+  .navbar-links {
+    display: none;
+  }
+
+  .navbar-toggle {
+    display: block;
+  }
+
+  .navbar-left {
+    display: none; /* Hide logo on desktop in mobile view */
+  }
+
+  .navbar-profile {
+    margin-left: auto;
+  }
+
+  .navbar-links.active .navbar-logo-mobile {
+    display: flex; /* Display the logo inside the hamburger menu */
+  }
+}
