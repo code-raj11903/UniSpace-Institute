@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaRupeeSign } from 'react-icons/fa';
-import Switcher6 from './Switcher';  // Import the toggle switch component
+import Switcher from './switcher';
+  // Import the toggle switch component
 
 const ResourceCard = ({ resource, onEdit, onDelete, onToggleAvailability }) => {
   const [isAvailable, setAvailability] = useState(resource.availability);

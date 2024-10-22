@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Switcher6 = ({ isChecked, handleCheckboxChange }) => {
+const Switcher = ({ isChecked, handleCheckboxChange }) => {
   return (
     <>
       <label className='flex cursor-pointer select-none items-center'>
@@ -24,4 +24,4 @@ const Switcher6 = ({ isChecked, handleCheckboxChange }) => {
   );
 };
 
-export default Switcher6;
+export default Switcher;
