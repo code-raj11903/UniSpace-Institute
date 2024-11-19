@@ -21,6 +21,10 @@ const ResourceSchema = new mongoose.Schema({
     type: Boolean, 
     default: true 
   },
+  booking: { 
+    type: Boolean, 
+    default: false 
+  },
   department_id: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: "Department" 
