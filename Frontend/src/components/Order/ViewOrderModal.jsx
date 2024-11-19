@@ -43,7 +43,9 @@ const ViewOrderModal = ({ isOpen, order, onClose }) => {
         {/* Other Order Details */}
         <div className="mb-4">
           <p><strong>Status:</strong> {order.status}</p>
-          <p><strong>Date:</strong> {new Date(order.date).toLocaleString()}</p>
+          <p><strong>Booked Date:</strong> {new Date(order.date).toLocaleString()}</p>
+          <p><strong>Start Date:</strong> {new Date(order?.start_date).toLocaleString()}</p>
+          <p><strong>End Date:</strong> {new Date(order?.end_date).toLocaleString()}</p>
           <p><strong>Total Amount:</strong> ₹{order.total_amount}</p>
           <p><strong>Payment Status:</strong> {order.payment_status}</p>
         </div>

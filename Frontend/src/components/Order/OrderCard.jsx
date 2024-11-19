@@ -5,7 +5,9 @@ const OrderCard = ({ order, onView}) => {
     <div className="border rounded-lg overflow-hidden shadow-lg p-4">
       <h3 className="text-xl font-bold">Order ID: {(order._id).toLocaleString()}</h3>
       <p>Status: {order.status}</p>
-      <p>Date: {new Date(order.date).toLocaleString()}</p>
+      <p>Booked Date: {new Date(order.date).toLocaleString()}</p>
+      <p>Start Date:{new Date(order?.start_date).toLocaleString()}</p>
+          <p>End Date: {new Date(order?.end_date).toLocaleString()}</p>
       <p>Total Amount: <FaRupeeSign className='sm inline'/>{order.total_amount}</p>
       <p>Payment Status: {order.payment_status}</p>
       <div className="mt-4">

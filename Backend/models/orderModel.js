@@ -13,6 +13,8 @@ const OrderSchema = new mongoose.Schema({
   date: { type: Date, default: Date.now },
   total_amount: { type: Number, required: true },
   payment_status: { type: String, default: "Pending" },
+  start_date: { type: Date},
+  end_date: { type: Date },
 });
 
 // Register the Booking model with Mongoose
