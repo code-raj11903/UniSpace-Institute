@@ -296,7 +296,7 @@ const getOrderHistory = async (req, res) => {
       .populate({
         path: 'orders',
         populate: [
-          { path: 'user_id', select: 'name email mobile address' }, // Populate user details (name and email)
+          { path: 'user_id', select: 'name email mobile address' }, // Populate user details
           { path: 'resource_ids', select: 'name type description price_per_day image_url' }, // Populate resource details
         ]
       });
@@ -305,12 +305,37 @@ const getOrderHistory = async (req, res) => {
       return res.status(404).json({ message: "Institute not found" });
     }
 
-    res.status(200).json(institute.orders);
+    // Determine order status (confirmed or expired) and sort them
+    const currentDate = new Date();
+
+    const sortedOrders = institute.orders
+      .map(order => ({
+        ...order._doc, // Spread to handle Mongoose document structure
+        status: new Date(order.end_date) < currentDate ? 'Expired' : order.status, // Update status
+      }))
+      .sort((a, b) => {
+        // Sort by status: confirmed first
+        if (a.status !== b.status) {
+          return a.status === 'Confirmed' ? -1 : 1;
+        }
+
+        // Sort by start_date (ascending)
+        const startDateDiff = new Date(a.start_date) - new Date(b.start_date);
+        if (startDateDiff !== 0) {
+          return startDateDiff;
+        }
+
+        // If start_date is the same, sort by end_date (descending)
+        return new Date(b.end_date) - new Date(a.end_date);
+      });
+
+    res.status(200).json(sortedOrders);
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("Error in getOrderHistory: ", error.message);
   }
 };
+
 // Update Institute Profile
 const updateInstituteProfile = async (req, res) => {
     try {

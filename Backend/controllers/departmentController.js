@@ -186,23 +186,52 @@ const getOrderHistory = async (req, res) => {
   try {
     const departmentId = req.user.id;
 
+    // Find the department and populate the 'orders' field with user and resource details
     const department = await Department.findById(departmentId).populate({
       path: 'orders',
       populate: [
-        { path: 'user_id', select: 'name email mobile address' }, // Populate user details (name and email)
+        { path: 'user_id', select: 'name email mobile address' }, // Populate user details (name, email, etc.)
         { path: 'resource_ids', select: 'name type description price_per_day image_url' }, // Populate resource details
       ]
     });
+
     if (!department) {
       return res.status(404).json({ message: "Department not found" });
     }
 
-    res.status(200).json(department.orders);
+    const currentDate = new Date(); // Get the current date to determine expiration status
+
+    // Map and sort the orders
+    const sortedOrders = department.orders
+      .map(order => ({
+        ...order._doc, // Spread '_doc' to handle Mongoose document structure
+        status: new Date(order.end_date) < currentDate ? 'Expired' : order.status, // Update status to 'Expired' if end_date is in the past
+      }))
+      .sort((a, b) => {
+        // Sort orders by status: 'confirmed' first
+        if (a.status !== b.status) {
+          return a.status === 'Confirmed' ? -1 : 1;
+        }
+
+        // If statuses are the same, sort by start_date in ascending order
+        const startDateDiff = new Date(a.start_date) - new Date(b.start_date);
+        if (startDateDiff !== 0) {
+          return startDateDiff;
+        }
+
+        // If start_date is the same, sort by end_date in descending order
+        return new Date(b.end_date) - new Date(a.end_date);
+      });
+
+    // Send sorted and updated orders as a response
+    res.status(200).json(sortedOrders);
+
   } catch (error) {
     res.status(500).json({ error: error.message });
-    console.log("Error in getOrderHistory: ", error.message);
+    console.error("Error in getOrderHistory: ", error.message);
   }
 };
+
 
 // Update department profile
 const updateDepartmentProfile = async (req, res) => {
