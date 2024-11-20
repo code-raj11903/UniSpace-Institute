@@ -57,13 +57,13 @@ const LoginPage = () => {
       <div className="bg-white shadow-lg p-8 rounded-lg w-full md:max-w-lg lg:mr-20">
         <h2 className="text-2xl font-bold mb-4 text-center">Log in to your account</h2>
 
-        <div className="flex justify-around mb-6">
+        {/* <div className="flex justify-around mb-6">
           <button className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300">
             Log in with Google
           </button>
-        </div>
+        </div> */}
 
-        <p className="text-center text-gray-500 mb-4">or</p>
+        {/* <p className="text-center text-gray-500 mb-4">or</p> */}
 
         <form onSubmit={handleLogin}>
           <div className="mb-4">
@@ -144,9 +144,9 @@ const LoginPage = () => {
 
         </form>
 
-        <p className="text-center text-gray-500 mt-4">
+        {/* <p className="text-center text-gray-500 mt-4">
           Forgot Password? <a href="/forgot-password" className="text-blue-600">Click Here</a>
-        </p>
+        </p> */}
 
         <p className="text-center text-gray-500 mt-4">
           Don't have an account? <a href="/register" className="text-blue-600">Sign Up</a>
