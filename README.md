@@ -3,6 +3,10 @@
 ## Overview :
 The UniSpace web interface is built to manage the resources of colleges and schools. It allows institutes and departments to add, update, and delete resources, manage departments, and handle bookings. The platform provides analytics and order history, helping institutes efficiently manage their assets.
 
+Link to Deployed Project: https://unispace-siw7.onrender.com/
+![image](https://github.com/user-attachments/assets/8bb82fe6-8a3e-41ad-bb72-f35c7cea4da1)
+
+
 ## 🌟 Features:
 
 Authentication: Institute and department login, with institute registration.
